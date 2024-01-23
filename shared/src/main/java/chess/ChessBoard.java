@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import static chess.ChessPiece.PieceType.ROOK;
 
@@ -246,12 +247,29 @@ public class ChessBoard {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ChessBoard that)) return false;
-        return Arrays.equals(currBoard, that.currBoard);
+        if (!(o instanceof ChessBoard)) return false;
+
+        ChessBoard that = (ChessBoard) o;
+
+        for (int i = 0; i < currBoard.length; i++) {
+            for (int j = 0; j < currBoard[i].length; j++) {
+                ChessPiece thisPiece = this.currBoard[i][j];
+                ChessPiece thatPiece = that.currBoard[i][j];
+
+                if (thisPiece == null && thatPiece != null) {
+                    return false;
+                } else if (thisPiece != null && !thisPiece.equals(thatPiece)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
+
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(currBoard);
+        return 1;
     }
 }
