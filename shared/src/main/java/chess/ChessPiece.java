@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -11,9 +13,9 @@ import java.util.Objects;
  */
 public class ChessPiece {
     ChessGame.TeamColor color;
-    ChessPiece.PieceType pieceType;
+    PieceType pieceType;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
        color = pieceColor;
        pieceType = type;
     }
@@ -52,7 +54,62 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        if(pieceType == PieceType.BISHOP) {
+            return bishopMoves(board, myPosition);
+        }
+
+        Collection<ChessMove> temp = null;
+        return temp;
+    }
+
+    public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> possibleMoves = new ArrayList<ChessMove>();
+        int currRow = myPosition.currRow;
+        int currCol = myPosition.currCol;
+
+        //check up
+        if(currRow > 1){
+            //diagonally to the upper left
+            int i = currRow;
+            int j = currCol;
+
+            while(i >= 1 && j >= 0) {
+                if(board.currBoard[i-1][j-1] == null) {
+                    ChessPosition newPosition = new ChessPosition(i-1, j-1);
+                    ChessMove newMove = new ChessMove(myPosition, newPosition,null);
+
+                    possibleMoves.add(newMove);
+
+                    i--;
+                    j--;
+                }
+                else {
+                    break;
+                }
+
+            }
+
+            //diagonally to the upper left
+            i = currRow;
+            j = currCol;
+
+            while(i >= 1 && j <= 8) {
+                if(board.currBoard[i-1][j+1] == null) {
+                    ChessPosition newPosition = new ChessPosition(i-1, j+1);
+                    ChessMove newMove = new ChessMove(myPosition, newPosition,null);
+
+                    possibleMoves.add(newMove);
+
+                    i--;
+                    j++;
+                }
+                else {
+                    break;
+                }
+
+            }
+        }
+        return possibleMoves;
     }
 
     @Override
