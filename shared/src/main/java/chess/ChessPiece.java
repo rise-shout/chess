@@ -60,11 +60,17 @@ public class ChessPiece {
         else if(pieceType == PieceType.KING) {
             return kingMoves(board, myPosition);
         }
+        else if(pieceType == PieceType.KNIGHT) {
+            return knightMoves(board, myPosition);
+        }
 
         Collection<ChessMove> temp = null;
         return temp;
     }
 
+    private boolean isValidMove(int row, int col, ChessBoard board) {
+        return row >= 0 && row <= 7 && col >= 0 && col <= 8 && (board.currBoard[row][col] == null || board.currBoard[row][col].getTeamColor() != getTeamColor());
+    }
     public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
 
@@ -162,22 +168,18 @@ public class ChessPiece {
 
         //top left, top, top right
         if(currRow - 1 >= 1) {
-            if(currCol - 1 >=0 ) {
-                if(board.currBoard[currRow - 1][currCol -1] == null || board.currBoard[currRow - 1][currCol -1].getTeamColor() != getTeamColor()) {
-                    ChessPosition newPosition = new ChessPosition(currRow - 1, currCol - 1);
-                    ChessMove newMove = new ChessMove(myPosition, newPosition, null);
-                    possibleMoves.add(newMove);
-                }
+            if(currCol - 1 >=0 && isValidMove(currRow-1, currCol-1, board)) {
+                ChessPosition newPosition = new ChessPosition(currRow - 1, currCol - 1);
+                ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+                possibleMoves.add(newMove);
             }
-            if(currCol + 1 <= 7 ) {
-                if(board.currBoard[currRow - 1][currCol + 1] == null || board.currBoard[currRow - 1][currCol +1].getTeamColor() != getTeamColor()) {
-                    ChessPosition newPosition = new ChessPosition(currRow - 1, currCol + 1);
-                    ChessMove newMove = new ChessMove(myPosition, newPosition, null);
-                    possibleMoves.add(newMove);
-                }
+            if(currCol + 1 <= 7 && isValidMove(currRow-1, currCol+1, board)) {
+                ChessPosition newPosition = new ChessPosition(currRow - 1, currCol + 1);
+                ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+                possibleMoves.add(newMove);
             }
 
-            if(board.currBoard[currRow - 1][currCol] == null || board.currBoard[currRow - 1][currCol].getTeamColor() != getTeamColor()) {
+            if(isValidMove(currRow-1, currCol, board)) {
                 ChessPosition newPosition = new ChessPosition(currRow - 1, currCol);
                 ChessMove newMove = new ChessMove(myPosition, newPosition, null);
                 possibleMoves.add(newMove);
@@ -185,48 +187,103 @@ public class ChessPiece {
         }
 
         // Left, right
-        if (currCol - 1 >= 0) {
-            if(board.currBoard[currRow][currCol -1] == null || board.currBoard[currRow][currCol -1].getTeamColor() != getTeamColor()) {
-                ChessPosition newPositionLeft = new ChessPosition(currRow, currCol - 1);
-                ChessMove newMoveLeft = new ChessMove(myPosition, newPositionLeft, null);
-                possibleMoves.add(newMoveLeft);
-            }
+        if (currCol - 1 >= 0 && isValidMove(currRow, currCol-1, board)) {
+            ChessPosition newPositionLeft = new ChessPosition(currRow, currCol - 1);
+            ChessMove newMoveLeft = new ChessMove(myPosition, newPositionLeft, null);
+            possibleMoves.add(newMoveLeft);
+
         }
-        if (currCol + 1 <= 7) {
-            if(board.currBoard[currRow][currCol + 1] == null || board.currBoard[currRow][currCol + 1].getTeamColor() != getTeamColor()) {
-                ChessPosition newPositionRight = new ChessPosition(currRow, currCol + 1);
-                ChessMove newMoveRight = new ChessMove(myPosition, newPositionRight, null);
-                possibleMoves.add(newMoveRight);
-            }
+        if (currCol + 1 <= 7 && isValidMove(currRow, currCol+1, board)) {
+            ChessPosition newPositionRight = new ChessPosition(currRow, currCol + 1);
+            ChessMove newMoveRight = new ChessMove(myPosition, newPositionRight, null);
+            possibleMoves.add(newMoveRight);
+
         }
 
         // Bottom left, bottom, bottom right
         if (currRow + 1 <= 7) {
-            if (currCol - 1 >= 0) {
-                if(board.currBoard[currRow + 1][currCol -1] == null || board.currBoard[currRow + 1][currCol -1].getTeamColor() != getTeamColor()) {
-                    ChessPosition newPosition = new ChessPosition(currRow + 1, currCol - 1);
-                    ChessMove newMove = new ChessMove(myPosition, newPosition, null);
-                    possibleMoves.add(newMove);
-                }
+            if (currCol - 1 >= 0 && isValidMove(currRow+1, currCol-1, board)) {
+                ChessPosition newPosition = new ChessPosition(currRow + 1, currCol - 1);
+                ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+                possibleMoves.add(newMove);
+
             }
 
-            if(board.currBoard[currRow + 1][currCol] == null || board.currBoard[currRow + 1][currCol].getTeamColor() != getTeamColor()) {
+            if(isValidMove(currRow+1, currCol, board)) {
                 ChessPosition newPositionBottom = new ChessPosition(currRow + 1, currCol);
                 ChessMove newMoveBottom = new ChessMove(myPosition, newPositionBottom, null);
                 possibleMoves.add(newMoveBottom);
             }
 
-            if (currCol + 1 <= 7) {
-                if(board.currBoard[currRow + 1][currCol + 1] == null || board.currBoard[currRow + 1][currCol + 1].getTeamColor() != getTeamColor()) {
-                    ChessPosition newPosition = new ChessPosition(currRow + 1, currCol + 1);
-                    ChessMove newMove = new ChessMove(myPosition, newPosition, null);
-                    possibleMoves.add(newMove);
-                }
+            if (currCol + 1 <= 7 && isValidMove(currRow+1, currCol+1, board)) {
+                ChessPosition newPosition = new ChessPosition(currRow + 1, currCol + 1);
+                ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+                possibleMoves.add(newMove);
+
             }
         }
 
         return possibleMoves;
 
+    }
+
+    public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+
+        int currRow = myPosition.currRow;
+        int currCol = myPosition.currCol;
+
+        // Top Moves----------------------------
+        // Left
+        if (currRow - 1 >= 1 && currCol - 2 >= 1 && isValidMove(currRow - 1, currCol - 2, board)) {
+            ChessPosition newPosition = new ChessPosition(currRow - 1, currCol - 2);
+            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+            possibleMoves.add(newMove);
+        }
+        if (currRow - 2 >= 1 && currCol - 1 >= 1 && isValidMove(currRow - 2, currCol - 1, board)) {
+            ChessPosition newPosition = new ChessPosition(currRow - 2, currCol - 1);
+            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+            possibleMoves.add(newMove);
+        }
+
+        // Right
+        if (currRow - 1 >= 1 && currCol + 2 <= 8 && isValidMove(currRow - 1, currCol + 2, board)) {
+            ChessPosition newPosition = new ChessPosition(currRow - 1, currCol + 2);
+            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+            possibleMoves.add(newMove);
+        }
+        if (currRow - 2 >= 1 && currCol + 1 <= 8 && isValidMove(currRow - 2, currCol + 1, board)) {
+            ChessPosition newPosition = new ChessPosition(currRow - 2, currCol + 1);
+            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+            possibleMoves.add(newMove);
+        }
+
+        // Bottom Moves----------------------------
+        // Left
+        if (currRow + 1 <= 8 && currCol - 2 >= 1 && isValidMove(currRow + 1, currCol - 2, board)) {
+            ChessPosition newPosition = new ChessPosition(currRow + 1, currCol - 2);
+            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+            possibleMoves.add(newMove);
+        }
+        if (currRow + 2 <= 8 && currCol - 1 >= 1 && isValidMove(currRow + 2, currCol - 1, board)) {
+            ChessPosition newPosition = new ChessPosition(currRow + 2, currCol - 1);
+            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+            possibleMoves.add(newMove);
+        }
+
+        // Right
+        if (currRow + 1 <= 8 && currCol + 2 <= 8 && isValidMove(currRow + 1, currCol + 2, board)) {
+            ChessPosition newPosition = new ChessPosition(currRow + 1, currCol + 2);
+            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+            possibleMoves.add(newMove);
+        }
+        if (currRow + 2 <= 8 && currCol + 1 <= 8 && isValidMove(currRow + 2, currCol + 1, board)) {
+            ChessPosition newPosition = new ChessPosition(currRow + 2, currCol + 1);
+            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+            possibleMoves.add(newMove);
+        }
+
+        return possibleMoves;
     }
 
 
