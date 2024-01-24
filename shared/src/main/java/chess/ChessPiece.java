@@ -80,48 +80,76 @@ public class ChessPiece {
         int currRow = myPosition.currRow;
         int currCol = myPosition.currCol;
 
-        // upper left
-        int i = currRow - 1;
-        int j = currCol - 1;  // Corrected initialization
-        while (i >= 1 && j >= 0 && isValidMove(i, j, board)) {
-            ChessPosition newPosition = new ChessPosition(i, j);
-            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
-            possibleMoves.add(newMove);
-            i--;
-            j--;
+        // Top Left Moves----------------------------
+        int testRow = currRow;
+        int testCol = currCol;
+        while (testRow - 1 >= 1 && testCol -1 >= 1) {
+            if (isValidMove(testRow - 1, testCol -1, board)) {
+                ChessPosition newPosition = new ChessPosition(testRow - 1, testCol -1);
+                ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+                possibleMoves.add(newMove);
+                testRow--;
+                testCol--;
+                if (board.currBoard[testRow][testCol] != null && board.currBoard[testRow][testCol].getTeamColor() != getTeamColor()) {
+                    break;
+                }
+            } else {
+                break;
+            }
         }
 
-        // Diagonally to the upper right
-        i = currRow - 1;
-        j = currCol + 1;
-        while (i >= 1 && j <= 7 && isValidMove(i, j, board)) {
-            ChessPosition newPosition = new ChessPosition(i, j);
-            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
-            possibleMoves.add(newMove);
-            i--;
-            j++;
+        // Top Right Moves -----
+        testRow = currRow;
+        testCol = currCol;
+        while (testRow - 1 >= 1 && testCol + 1<= 8) {
+            if (isValidMove(testRow - 1, testCol +1, board)) {
+                ChessPosition newPosition = new ChessPosition(testRow - 1, testCol +1);
+                ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+                possibleMoves.add(newMove);
+                testRow--;
+                testCol++;
+                if (board.currBoard[testRow][testCol] != null && board.currBoard[testRow][testCol].getTeamColor() != getTeamColor()) {
+                    break;
+                }
+            } else {
+                break;
+            }
         }
 
-        // Diagonally to the bottom left
-        i = currRow + 1;
-        j = currCol - 1;
-        while (i <= 8 && j >= 0 && isValidMove(i, j, board)) {
-            ChessPosition newPosition = new ChessPosition(i, j);
-            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
-            possibleMoves.add(newMove);
-            i++;
-            j--;
+        //Bottom Right Moves
+        testRow = currRow;
+        testCol = currCol;
+        while (testRow + 1 <= 8 && testCol + 1<= 8) {
+            if (isValidMove(testRow + 1, testCol +1, board)) {
+                ChessPosition newPosition = new ChessPosition(testRow + 1, testCol +1);
+                ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+                possibleMoves.add(newMove);
+                testRow++;
+                testCol++;
+                if (board.currBoard[testRow][testCol] != null && board.currBoard[testRow][testCol].getTeamColor() != getTeamColor()) {
+                    break;
+                }
+            } else {
+                break;
+            }
         }
 
-        // Diagonally to the bottom right
-        i = currRow + 1;
-        j = currCol + 1;
-        while (i <= 8 && j <= 7 && isValidMove(i, j, board)) {
-            ChessPosition newPosition = new ChessPosition(i, j);
-            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
-            possibleMoves.add(newMove);
-            i++;
-            j++;
+        //Bottom Left Moves
+        testRow = currRow;
+        testCol = currCol;
+        while (testRow + 1 <= 8 && testCol -1 >= 1) {
+            if (isValidMove(testRow + 1, testCol -1, board)) {
+                ChessPosition newPosition = new ChessPosition(testRow + 1, testCol -1);
+                ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+                possibleMoves.add(newMove);
+                testRow++;
+                testCol--;
+                if (board.currBoard[testRow][testCol] != null && board.currBoard[testRow][testCol].getTeamColor() != getTeamColor()) {
+                    break;
+                }
+            } else {
+                break;
+            }
         }
 
         return possibleMoves;
