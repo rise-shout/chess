@@ -63,6 +63,9 @@ public class ChessPiece {
         else if(pieceType == PieceType.KNIGHT) {
             return knightMoves(board, myPosition);
         }
+        else if(pieceType == PieceType.QUEEN) {
+            return queenMoves(board, myPosition);
+        }
         else if(pieceType == PieceType.ROOK) {
             return rookMoves(board, myPosition);
         }
@@ -155,7 +158,6 @@ public class ChessPiece {
         return possibleMoves;
     }
 
-
     public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
 
@@ -222,7 +224,6 @@ public class ChessPiece {
         return possibleMoves;
 
     }
-
     public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
 
@@ -282,6 +283,19 @@ public class ChessPiece {
         return possibleMoves;
     }
 
+    public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+
+        // Combine rook and bishop moves for the queen
+
+        // Rook-like moves (horizontal and vertical)
+        possibleMoves.addAll(rookMoves(board, myPosition));
+
+        // Bishop-like moves (diagonal)
+        possibleMoves.addAll(bishopMoves(board, myPosition));
+
+        return possibleMoves;
+    }
     public Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
 
