@@ -63,19 +63,25 @@ public class ChessPiece {
         else if(pieceType == PieceType.KNIGHT) {
             return knightMoves(board, myPosition);
         }
+        else if(pieceType == PieceType.PAWN) {
+            return pawnMoves(board, myPosition);
+        }
         else if(pieceType == PieceType.QUEEN) {
             return queenMoves(board, myPosition);
         }
-        else if(pieceType == PieceType.ROOK) {
+        else {
             return rookMoves(board, myPosition);
         }
-
-        Collection<ChessMove> temp = null;
-        return temp;
     }
 
     private boolean isValidMove(int row, int col, ChessBoard board) {
         return row >= 0 && row <= 8 && col >= 0 && col <= 8 && (board.currBoard[row][col] == null || board.currBoard[row][col].getTeamColor() != getTeamColor());
+    }
+    private boolean isValidMovePawn(int row, int col, ChessBoard board) {
+        return row >= 1 && row <= 8 && col >= 0 && col <= 8 && (board.currBoard[row][col] == null);
+    }
+    private boolean isValidCapturePawn(int row, int col, ChessBoard board) {
+        return row >= 1 && row <= 8 && col >= 0 && col <= 8 && board.currBoard[row][col] != null && board.currBoard[row][col].getTeamColor() != getTeamColor();
     }
     public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
@@ -283,6 +289,125 @@ public class ChessPiece {
         return possibleMoves;
     }
 
+    public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+
+        int currRow = myPosition.currRow;
+        int currCol = myPosition.currCol;
+
+        //Check for initial move
+        if(currRow == 2 || currRow == 7) {
+            if (getTeamColor() == ChessGame.TeamColor.WHITE) {
+                if (isValidMovePawn(currRow + 2, currCol, board) && isValidMovePawn(currRow + 1, currCol, board)) {
+                    ChessPosition newPosition = new ChessPosition(currRow + 2, currCol);
+                    ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+                    possibleMoves.add(newMove);
+                }
+
+            }
+
+            else {
+                if (getTeamColor() == ChessGame.TeamColor.BLACK) {
+
+                    if(isValidMovePawn(currRow -2, currCol, board) && isValidMovePawn(currRow -1, currCol, board)) {
+                        ChessPosition newPosition = new ChessPosition(currRow - 2, currCol);
+                        ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+                        possibleMoves.add(newMove);
+                    }
+                }
+            }
+        }
+
+        //Check for regular move
+
+        if (getTeamColor() == ChessGame.TeamColor.WHITE) {
+            if (isValidMovePawn(currRow + 1, currCol, board)) {
+                    ChessPosition newPosition = new ChessPosition(currRow + 1, currCol);
+                if (currRow == 7) {
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
+                }
+                else {
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, null));
+                }
+            }
+        }
+
+        if (getTeamColor() == ChessGame.TeamColor.BLACK) {
+            if(isValidMovePawn(currRow -1, currCol, board)) {
+                ChessPosition newPosition = new ChessPosition(currRow - 1, currCol);
+                if (currRow == 2) {
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
+                }
+                else {
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, null));
+                }
+            }
+        }
+
+        //Check for capture
+        if (getTeamColor() == ChessGame.TeamColor.WHITE) {
+            if (isValidCapturePawn(currRow + 1, currCol + 1, board)) {
+                ChessPosition newPosition = new ChessPosition(currRow + 1, currCol + 1);
+                if (currRow == 7) {
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
+                }
+                else {
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, null));
+                }
+            }
+            if (isValidCapturePawn(currRow + 1, currCol - 1, board)) {
+                ChessPosition newPosition = new ChessPosition(currRow + 1, currCol - 1);
+                if (currRow == 7) {
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
+                }
+                else {
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, null));
+                }
+            }
+        }
+
+        if (getTeamColor() == ChessGame.TeamColor.BLACK) {
+            if(isValidCapturePawn(currRow -1, currCol + 1, board)) {
+                ChessPosition newPosition = new ChessPosition(currRow - 1, currCol + 1);
+                if (currRow == 2) {
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
+                }
+                else {
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, null));
+                }
+
+            }
+            if(isValidCapturePawn(currRow -1, currCol - 1, board)) {
+                ChessPosition newPosition = new ChessPosition(currRow - 1, currCol - 1);
+                if (currRow == 2) {
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
+                }
+                else {
+                    possibleMoves.add(new ChessMove(myPosition, newPosition, null));
+                }
+            }
+        }
+
+        return possibleMoves;
+    }
     public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
 
