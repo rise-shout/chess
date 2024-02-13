@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -10,7 +11,12 @@ import java.util.Collection;
  */
 public class ChessGame {
 
+    TeamColor currColor;
+    Collection<ChessMove> possibleMoves;
+    ChessBoard gameBoard = new ChessBoard();
+
     public ChessGame() {
+        currColor = TeamColor.WHITE;
 
     }
 
@@ -18,7 +24,8 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+
+        return currColor;
     }
 
     /**
@@ -27,7 +34,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        currColor = team;
     }
 
     /**
@@ -46,7 +53,14 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece currPiece = gameBoard.getPiece(startPosition);
+        if(currPiece == null) {
+            return null;
+        }
+        else {
+            return currPiece.pieceMoves(gameBoard, startPosition);
+        }
+
     }
 
     /**
@@ -56,7 +70,19 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPiece temp = gameBoard.getPiece(move.getStartPosition());
+        int startCol = move.getStartPosition().currCol;
+        int startRow = move.getStartPosition().currRow;
+        gameBoard.currBoard[startRow][startCol] = null;
+
+        //promote piece if needed
+        if(temp.pieceType != move.promo && move.promo != null) {
+            temp.setPieceType(move.promo);
+        }
+
+        int endCol = move.getEndPosition().currCol;
+        int endRow = move.getEndPosition().currRow;
+        gameBoard.currBoard[endRow][endCol] = temp;
     }
 
     /**
@@ -96,7 +122,14 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        for(int i = 0; i < board.currBoard[0].length; i++) {
+            for(int j = 0; j < board.currBoard.length; j++) {
+                ChessPosition currPosition = new ChessPosition(i, j);
+                 if(board.getPiece(currPosition) != null) {
+                     gameBoard.addPiece(currPosition, board.getPiece(currPosition));
+                 }
+            }
+        }
     }
 
     /**
@@ -105,6 +138,18 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return gameBoard;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChessGame chessGame)) return false;
+        return currColor == chessGame.currColor && Objects.equals(possibleMoves, chessGame.possibleMoves) && Objects.equals(gameBoard, chessGame.gameBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(currColor, possibleMoves, gameBoard);
     }
 }
