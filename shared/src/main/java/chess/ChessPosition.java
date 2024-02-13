@@ -9,6 +9,7 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPosition {
+
     int currRow;
     int currCol;
 

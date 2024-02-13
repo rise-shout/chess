@@ -11,13 +11,13 @@ import java.util.Objects;
 public class ChessMove {
     ChessPosition start;
     ChessPosition end;
-    ChessPiece.PieceType promoPiece;
+    ChessPiece.PieceType promo;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
-        end = endPosition;
         start = startPosition;
-        promoPiece = promotionPiece;
+        end = endPosition;
+        promo = promotionPiece;
     }
 
     /**
@@ -41,18 +41,18 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        return promoPiece;
+        return promo;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ChessMove chessMove)) return false;
-        return Objects.equals(start, chessMove.start) && Objects.equals(end, chessMove.end) && promoPiece == chessMove.promoPiece;
+        return Objects.equals(start, chessMove.start) && Objects.equals(end, chessMove.end) && promo == chessMove.promo;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(start, end, promoPiece);
+        return Objects.hash(start, end, promo);
     }
 }
