@@ -59,6 +59,9 @@ public class ChessPiece {
         if(pieceType == PieceType.KNIGHT) {
             return knightMoves(board, myPosition);
         }
+        if(pieceType == PieceType.ROOK) {
+            return rookMoves(board, myPosition);
+        }
 
         return null;
     }
@@ -191,6 +194,87 @@ public class ChessPiece {
         return possibleMoves;
     }
 
+    public Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+        int startRow = myPosition.getRow();
+        int startCol = myPosition.getColumn();
 
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+
+        //go up
+        int currRow = startRow;
+        int currCol = startCol;
+
+        while(currRow > 1) {
+            if(isValidMove(currRow -1, currCol, board)) {
+                possibleMoves.add(createMove(myPosition, currRow-1, currCol, null));
+
+                //capture
+                if(board.currBoard[currRow - 1][currCol] != null && board.currBoard[currRow - 1][currCol].getTeamColor() != color) {
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+            currRow--;
+        }
+
+        //go down
+        currRow = startRow;
+
+        while(currRow < 8) {
+            if(isValidMove(currRow +1, currCol, board)) {
+                possibleMoves.add(createMove(myPosition, currRow+1, currCol, null));
+
+                //capture
+                if(board.currBoard[currRow + 1][currCol] != null && board.currBoard[currRow + 1][currCol].getTeamColor() != color) {
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+            currRow++;
+        }
+
+        //go right
+        currRow = startRow;
+
+        while(currCol < 8) {
+            if(isValidMove(currRow, currCol + 1, board)) {
+                possibleMoves.add(createMove(myPosition, currRow, currCol + 1, null));
+
+                //capture
+                if(board.currBoard[currRow][currCol + 1] != null && board.currBoard[currRow][currCol + 1].getTeamColor() != color) {
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+            currCol++;
+        }
+
+        //go left
+        //go right
+        currCol = startCol;
+
+        while(currCol > 1) {
+            if(isValidMove(currRow, currCol - 1, board)) {
+                possibleMoves.add(createMove(myPosition, currRow, currCol - 1, null));
+
+                //capture
+                if(board.currBoard[currRow][currCol - 1] != null && board.currBoard[currRow][currCol - 1].getTeamColor() != color) {
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+            currCol--;
+        }
+
+        return possibleMoves;
+    }
 
 }
