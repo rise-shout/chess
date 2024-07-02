@@ -15,6 +15,8 @@ public class ChessPiece {
     ChessPiece.PieceType pieceType;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        color = pieceColor;
+        pieceType = type;
     }
 
     /**
@@ -51,6 +53,71 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        if(pieceType == PieceType.KING) {
+            return kingMoves(board, myPosition);
+        }
+
+        return null;
+    }
+
+    public boolean isValidMove(int row, int col, ChessBoard board) {
+        if(row >= 1 && col >= 1 && row <= 8 && col <= 8) {
+            return board.currBoard[row][col] == null || board.currBoard[row][col].getTeamColor() != color;
+        }
+        return false;
+    }
+
+    public ChessMove createMove(ChessPosition startPosition, int endRow, int endCol, ChessPiece.PieceType promo) {
+        ChessPosition endPosition = new ChessPosition(endRow, endCol);
+        return new ChessMove(startPosition, endPosition, promo);
+    }
+
+    public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+        int startRow = myPosition.getRow();
+        int startCol = myPosition.getColumn();
+
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+
+        //top moves
+        if(startRow != 1) {
+            //top left
+            if(startCol != 1 && isValidMove(startRow-1, startCol-1, board)) {
+                possibleMoves.add(createMove(myPosition, startRow-1, startCol-1,null));
+            }
+            //top right
+            if(startCol != 8 && isValidMove(startRow-1, startCol+1, board)) {
+                possibleMoves.add(createMove(myPosition, startRow-1, startCol+1,null));
+            }
+            //top center
+            if(isValidMove(startRow-1, startCol, board)) {
+                possibleMoves.add(createMove(myPosition, startRow-1, startCol,null));
+            }
+        }
+
+        //bottom moves
+        if(startRow != 8) {
+            //bottom left
+            if(startCol != 1 && isValidMove(startRow+1, startCol-1, board)) {
+                possibleMoves.add(createMove(myPosition, startRow+1, startCol-1,null));
+            }
+            //bottom right
+            if(startCol != 8 && isValidMove(startRow+1, startCol+1, board)) {
+                possibleMoves.add(createMove(myPosition, startRow+1, startCol+1,null));
+            }
+            //bottom center
+            if(isValidMove(startRow+1, startCol, board)) {
+                possibleMoves.add(createMove(myPosition, startRow+1, startCol,null));
+            }
+        }
+
+        //left and right
+        if(startCol != 1 && isValidMove(startRow, startCol-1, board)) {
+            possibleMoves.add(createMove(myPosition, startRow, startCol-1,null));
+        }
+        if(startCol != 8 && isValidMove(startRow, startCol+1, board)) {
+            possibleMoves.add(createMove(myPosition, startRow, startCol+1,null));
+        }
+
+        return possibleMoves;
     }
 }
