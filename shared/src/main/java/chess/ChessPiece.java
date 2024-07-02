@@ -65,6 +65,9 @@ public class ChessPiece {
         if(pieceType == PieceType.BISHOP) {
             return bishopMoves(board, myPosition);
         }
+        if(pieceType == PieceType.QUEEN) {
+            return queenMoves(board, myPosition);
+        }
 
         return null;
     }
@@ -365,6 +368,15 @@ public class ChessPiece {
             currRow++;
             currCol--;
         }
+
+        return possibleMoves;
+    }
+
+    public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+
+        possibleMoves.addAll(rookMoves(board, myPosition));
+        possibleMoves.addAll(bishopMoves(board, myPosition));
 
         return possibleMoves;
     }
