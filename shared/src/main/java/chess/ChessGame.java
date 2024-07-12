@@ -10,7 +10,12 @@ import java.util.Collection;
  */
 public class ChessGame {
 
+    TeamColor currColor;
+    Collection<ChessMove> possibleMoves;
+    ChessBoard gameBoard = new ChessBoard();
+
     public ChessGame() {
+        currColor = TeamColor.WHITE;
 
     }
 
@@ -18,7 +23,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return currColor;
     }
 
     /**
