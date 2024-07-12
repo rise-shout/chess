@@ -13,7 +13,7 @@ public class ChessBoard {
     ChessPiece[][] currBoard = new ChessPiece[9][9];
 
     public ChessBoard() {
-        
+
     }
 
     /**
@@ -48,6 +48,7 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
+
         //add pawns
         //black
         for(int i = 1; i <= 8; i++) {
@@ -85,6 +86,7 @@ public class ChessBoard {
         currBoard[1][5] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
         currBoard[8][5] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
     }
+
 
     public ChessPiece[][] getCurrBoard(){
         return currBoard;

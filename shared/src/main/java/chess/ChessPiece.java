@@ -1,7 +1,7 @@
 package chess;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -78,7 +78,7 @@ public class ChessPiece {
 
         return null;
     }
-    //overloaded
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         if(pieceType == PieceType.KING) {
             return kingMoves(board, myPosition, false);
@@ -109,7 +109,19 @@ public class ChessPiece {
         return false;
     }
 
+    public boolean isValidPawnMove(int row, int col, ChessBoard board) {
+        if(row >= 1 && col >= 1 && row <= 8 && col <= 8) {
+            return board.currBoard[row][col] == null;
+        }
+        return false;
+    }
 
+    public boolean isValidPawnCapture(int row, int col, ChessBoard board) {
+        if(row >= 1 && col >= 1 && row <= 8 && col <= 8) {
+            return board.currBoard[row][col] != null && board.currBoard[row][col].getTeamColor() != color;
+        }
+        return false;
+    }
 
     public ChessMove createMove(ChessPosition startPosition, int endRow, int endCol, ChessPiece.PieceType promo) {
         ChessPosition endPosition = new ChessPosition(endRow, endCol);
@@ -177,6 +189,8 @@ public class ChessPiece {
             return outOfCheckMoves;
         }
         return possibleMoves;
+
+
     }
 
     public boolean kingInCheck(ChessBoard board, ChessPiece piece) {
@@ -280,8 +294,6 @@ public class ChessPiece {
         return kingPosition != null && isKingThreatened(kingPosition, teamColor, testBoard);
     }
 
-
-
     public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition, boolean isTest) {
 
          /*
@@ -295,6 +307,7 @@ public class ChessPiece {
 
         int startRow = myPosition.getRow();
         int startCol = myPosition.getColumn();
+
 
         Collection<ChessMove> possibleMoves = new ArrayList<>();
 
@@ -344,6 +357,18 @@ public class ChessPiece {
             if(startCol <= 7 && isValidMove(startRow+2, startCol+1, board)) {
                 possibleMoves.add(createMove(myPosition, startRow+2, startCol+1,null));
             }
+        }
+
+        //only do this if it's not a test
+        if(!isTest) {
+            Collection<ChessMove> outOfCheckMoves = new ArrayList<>();
+            //only save moves that keep the king out of check
+            for (ChessMove moveToCheck : possibleMoves) {
+                if (!moveResultsInCheck(moveToCheck, board)) {
+                    outOfCheckMoves.add(moveToCheck);
+                }
+            }
+            return outOfCheckMoves;
         }
 
         return possibleMoves;
@@ -429,6 +454,17 @@ public class ChessPiece {
             currCol--;
         }
 
+        //only do this if it's not a test
+        if(!isTest) {
+            Collection<ChessMove> outOfCheckMoves = new ArrayList<>();
+            //only save moves that keep the king out of check
+            for (ChessMove moveToCheck : possibleMoves) {
+                if (!moveResultsInCheck(moveToCheck, board)) {
+                    outOfCheckMoves.add(moveToCheck);
+                }
+            }
+            return outOfCheckMoves;
+        }
         return possibleMoves;
     }
 
@@ -507,7 +543,7 @@ public class ChessPiece {
                 possibleMoves.add(createMove(myPosition, currRow+1, currCol-1, null));
 
                 //capture
-                if(board.currBoard[currRow + 1][currCol+1] != null && board.currBoard[currRow + 1][currCol-1].getTeamColor() != color) {
+                if(board.currBoard[currRow + 1][currCol-1] != null && board.currBoard[currRow + 1][currCol-1].getTeamColor() != color) {
                     break;
                 }
             }
@@ -518,30 +554,38 @@ public class ChessPiece {
             currCol--;
         }
 
+        //only do this if it's not a test
+        if(!isTest) {
+            Collection<ChessMove> outOfCheckMoves = new ArrayList<>();
+            //only save moves that keep the king out of check
+            for (ChessMove moveToCheck : possibleMoves) {
+                if (!moveResultsInCheck(moveToCheck, board)) {
+                    outOfCheckMoves.add(moveToCheck);
+                }
+            }
+            return outOfCheckMoves;
+        }
         return possibleMoves;
     }
 
     public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition, boolean isTest) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
 
-        possibleMoves.addAll(rookMoves(board, myPosition));
-        possibleMoves.addAll(bishopMoves(board, myPosition));
+        possibleMoves.addAll(rookMoves(board, myPosition, isTest));
+        possibleMoves.addAll(bishopMoves(board, myPosition, isTest));
 
+        //only do this if it's not a test
+        if(!isTest) {
+            Collection<ChessMove> outOfCheckMoves = new ArrayList<>();
+            //only save moves that keep the king out of check
+            for (ChessMove moveToCheck : possibleMoves) {
+                if (!moveResultsInCheck(moveToCheck, board)) {
+                    outOfCheckMoves.add(moveToCheck);
+                }
+            }
+            return outOfCheckMoves;
+        }
         return possibleMoves;
-    }
-
-    public boolean isValidPawnMove(int row, int col, ChessBoard board) {
-        if(row >= 1 && col >= 1 && row <= 8 && col <= 8) {
-            return board.currBoard[row][col] == null;
-        }
-        return false;
-    }
-
-    public boolean isValidPawnCapture(int row, int col, ChessBoard board) {
-        if(row >= 1 && col >= 1 && row <= 8 && col <= 8) {
-            return board.currBoard[row][col] != null && board.currBoard[row][col].getTeamColor() != color;
-        }
-        return false;
     }
 
     public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition, boolean isTest) {
@@ -639,6 +683,17 @@ public class ChessPiece {
             }
         }
 
+        //only do this if it's not a test
+        if(!isTest) {
+            Collection<ChessMove> outOfCheckMoves = new ArrayList<>();
+            //only save moves that keep the king out of check
+            for (ChessMove moveToCheck : possibleMoves) {
+                if (!moveResultsInCheck(moveToCheck, board)) {
+                    outOfCheckMoves.add(moveToCheck);
+                }
+            }
+            return outOfCheckMoves;
+        }
         return possibleMoves;
     }
 
@@ -653,7 +708,4 @@ public class ChessPiece {
     public int hashCode() {
         return Objects.hash(color, pieceType);
     }
-
-    
-
 }
