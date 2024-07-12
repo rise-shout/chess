@@ -132,7 +132,7 @@ public class ChessPiece {
         int startRow = myPosition.getRow();
         int startCol = myPosition.getColumn();
 
-        System.out.println(board.currBoard[startRow][startCol]);
+        //System.out.println(board.currBoard[startRow][startCol]);
 
 
         Collection<ChessMove> possibleMoves = new ArrayList<>();
@@ -682,6 +682,7 @@ public class ChessPiece {
                 possibleMoves.add(createMove(myPosition, startRow + 1, startCol+1, PieceType.ROOK));
             }
         }
+
 
         //only do this if it's not a test
         if(!isTest) {

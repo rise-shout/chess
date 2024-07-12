@@ -17,6 +17,7 @@ public class ChessGame {
 
     public ChessGame() {
         currColor = TeamColor.WHITE;
+        gameBoard.resetBoard();
 
     }
 
@@ -73,7 +74,7 @@ public class ChessGame {
 
 
         //if its not a valid chess move
-        if(!validMoves(move.getStartPosition()).contains(move)) {
+        if(validMoves(move.getStartPosition()) == null|| !validMoves(move.getStartPosition()).contains(move)) {
             throw new InvalidMoveException();
         }
 
@@ -339,13 +340,26 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
+        //resetBoard --> clear it out
         for(int i = 0; i < board.currBoard[0].length; i++) {
             for(int j = 0; j < board.currBoard.length; j++) {
                 ChessPosition currPosition = new ChessPosition(i, j);
                 if(board.getPiece(currPosition) != null) {
                     gameBoard.addPiece(currPosition, board.getPiece(currPosition));
                 }
+                else {
+                    gameBoard.currBoard[currPosition.currRow][currPosition.currCol] = null;
+                }
             }
+        }
+    }
+
+    public void clearBoard(ChessBoard board) {
+        for(int i = 0; i < board.currBoard.length; i++) {
+            for(int j = 0; j < board.currBoard[0].length; j++) {
+                board.currBoard[i][j] = null;
+            }
+
         }
     }
 
