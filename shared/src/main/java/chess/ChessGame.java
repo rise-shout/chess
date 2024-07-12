@@ -32,7 +32,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        currColor = team;
     }
 
     /**
@@ -51,7 +51,13 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece currPiece = gameBoard.getPiece(startPosition);
+        if(currPiece == null) {
+            return null;
+        }
+        else {
+            return currPiece.pieceMoves(gameBoard, startPosition, false);
+        }
     }
 
     /**
