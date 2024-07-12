@@ -45,6 +45,10 @@ public class ChessPiece {
         return pieceType;
     }
 
+    public void setPieceType(PieceType pieceType) {
+        this.pieceType = pieceType;
+    }
+
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -70,6 +74,29 @@ public class ChessPiece {
         }
         if(pieceType == PieceType.PAWN) {
             return pawnMoves(board, myPosition, isTest);
+        }
+
+        return null;
+    }
+    //overloaded
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        if(pieceType == PieceType.KING) {
+            return kingMoves(board, myPosition, false);
+        }
+        if(pieceType == PieceType.KNIGHT) {
+            return knightMoves(board, myPosition, false);
+        }
+        if(pieceType == PieceType.ROOK) {
+            return rookMoves(board, myPosition, false);
+        }
+        if(pieceType == PieceType.BISHOP) {
+            return bishopMoves(board, myPosition,false);
+        }
+        if(pieceType == PieceType.QUEEN) {
+            return queenMoves(board, myPosition, false);
+        }
+        if(pieceType == PieceType.PAWN) {
+            return pawnMoves(board, myPosition, false);
         }
 
         return null;
