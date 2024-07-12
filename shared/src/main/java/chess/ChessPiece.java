@@ -54,24 +54,23 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition, boolean isTest) {
         if(pieceType == PieceType.KING) {
-            return kingMoves(board, myPosition);
+            return kingMoves(board, myPosition, isTest);
         }
         if(pieceType == PieceType.KNIGHT) {
-            return knightMoves(board, myPosition);
+            return knightMoves(board, myPosition, isTest);
         }
         if(pieceType == PieceType.ROOK) {
-            return rookMoves(board, myPosition);
+            return rookMoves(board, myPosition, isTest);
         }
         if(pieceType == PieceType.BISHOP) {
-            return bishopMoves(board, myPosition);
+            return bishopMoves(board, myPosition,isTest);
         }
         if(pieceType == PieceType.QUEEN) {
-            return queenMoves(board, myPosition);
+            return queenMoves(board, myPosition, isTest);
         }
         if(pieceType == PieceType.PAWN) {
-            return pawnMoves(board, myPosition);
+            return pawnMoves(board, myPosition, isTest);
         }
-
 
         return null;
     }
@@ -88,7 +87,7 @@ public class ChessPiece {
         return new ChessMove(startPosition, endPosition, promo);
     }
 
-    public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition, boolean isTest) {
         int startRow = myPosition.getRow();
         int startCol = myPosition.getColumn();
 
@@ -137,7 +136,7 @@ public class ChessPiece {
         return possibleMoves;
     }
 
-    public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition, boolean isTest) {
 
          /*
         | |x| |x| |
@@ -204,7 +203,7 @@ public class ChessPiece {
         return possibleMoves;
     }
 
-    public Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition, boolean isTest) {
         int startRow = myPosition.getRow();
         int startCol = myPosition.getColumn();
 
@@ -287,7 +286,7 @@ public class ChessPiece {
         return possibleMoves;
     }
 
-    public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition, boolean isTest) {
         int startRow = myPosition.getRow();
         int startCol = myPosition.getColumn();
 
@@ -376,7 +375,7 @@ public class ChessPiece {
         return possibleMoves;
     }
 
-    public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition, boolean isTest) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
 
         possibleMoves.addAll(rookMoves(board, myPosition));
@@ -399,7 +398,7 @@ public class ChessPiece {
         return false;
     }
 
-    public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition, boolean isTest) {
         int startRow = myPosition.getRow();
         int startCol = myPosition.getColumn();
 
