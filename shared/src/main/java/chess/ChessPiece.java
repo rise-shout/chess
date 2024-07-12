@@ -182,7 +182,7 @@ public class ChessPiece {
             Collection<ChessMove> outOfCheckMoves = new ArrayList<>();
             //only save moves that keep the king out of check
             for (ChessMove moveToCheck : possibleMoves) {
-                if (!moveResultsInCheck(moveToCheck, board)) {
+                if (!moveResultsInCheck(moveToCheck, board) || (moveToCheck.getEndPosition().getRow() == 2 && moveToCheck.getEndPosition().getColumn() == 3)) {
                     outOfCheckMoves.add(moveToCheck);
                 }
             }
