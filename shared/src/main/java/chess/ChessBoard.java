@@ -86,6 +86,10 @@ public class ChessBoard {
         currBoard[8][5] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
     }
 
+    public ChessPiece[][] getCurrBoard(){
+        return currBoard;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
