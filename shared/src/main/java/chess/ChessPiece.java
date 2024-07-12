@@ -109,6 +109,8 @@ public class ChessPiece {
         return false;
     }
 
+
+
     public ChessMove createMove(ChessPosition startPosition, int endRow, int endCol, ChessPiece.PieceType promo) {
         ChessPosition endPosition = new ChessPosition(endRow, endCol);
         return new ChessMove(startPosition, endPosition, promo);
@@ -117,6 +119,9 @@ public class ChessPiece {
     public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition, boolean isTest) {
         int startRow = myPosition.getRow();
         int startCol = myPosition.getColumn();
+
+        System.out.println(board.currBoard[startRow][startCol]);
+
 
         Collection<ChessMove> possibleMoves = new ArrayList<>();
 
@@ -160,8 +165,122 @@ public class ChessPiece {
             possibleMoves.add(createMove(myPosition, startRow, startCol+1,null));
         }
 
+        //only do this if it's not a test
+        if(!isTest) {
+            Collection<ChessMove> outOfCheckMoves = new ArrayList<>();
+            //only save moves that keep the king out of check
+            for (ChessMove moveToCheck : possibleMoves) {
+                if (!moveResultsInCheck(moveToCheck, board)) {
+                    outOfCheckMoves.add(moveToCheck);
+                }
+            }
+            return outOfCheckMoves;
+        }
         return possibleMoves;
     }
+
+    public boolean kingInCheck(ChessBoard board, ChessPiece piece) {
+        ChessPosition kingPosition = findKingPosition(piece.getTeamColor(), board);
+
+        // If king position is not found or there is no opponent piece threatening the king, not in check
+        return kingPosition != null && isKingThreatened(kingPosition, piece.getTeamColor(), board);
+    }
+
+    private ChessPosition findKingPosition(ChessGame.TeamColor teamColor, ChessBoard testBoard) {
+        for (int i = 0; i < testBoard.currBoard.length; i++) {
+            for (int j = 0; j < testBoard.currBoard.length; j++) {
+                ChessPosition currPosition = new ChessPosition(i, j);
+                ChessPiece currPiece = testBoard.getPiece(currPosition);
+
+                if (currPiece != null && currPiece.getTeamColor() == teamColor && currPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                    return currPosition;
+                }
+            }
+        }
+
+        return null; // King not found
+    }
+
+    private boolean isKingThreatened(ChessPosition kingPosition, ChessGame.TeamColor teamColor, ChessBoard testBoard) {
+        ChessGame.TeamColor opponentColor;
+        if(teamColor == ChessGame.TeamColor.WHITE){
+            opponentColor = ChessGame.TeamColor.BLACK;
+        }
+        else {
+            opponentColor = ChessGame.TeamColor.WHITE;
+        }
+
+        for (int i = 0; i < testBoard.currBoard.length; i++) {
+            for (int j = 0; j < testBoard.currBoard.length; j++) {
+                ChessPosition currentPosition = new ChessPosition(i, j);
+                ChessPiece currentPiece = testBoard.getPiece(currentPosition);
+
+                if (currentPiece != null && currentPiece.getTeamColor() == opponentColor) {
+                    Collection<ChessMove> opponentMoves = currentPiece.pieceMoves(testBoard, currentPosition, true);
+                    if (opponentMoves != null) {
+                        for(ChessMove testMove : opponentMoves) {
+                            if(testMove.getEndPosition().getRow() == kingPosition.getRow() && testMove.getEndPosition().getColumn() == kingPosition.getColumn()) {
+                                return true; // King is under threat
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        return false; // King is not under threat
+    }
+
+    public boolean moveResultsInCheck(ChessMove move, ChessBoard board) {
+
+        ChessBoard testBoard = createFakeBoard(board);
+        ChessPiece temp = testBoard.getPiece(move.getStartPosition());
+        int startCol = move.getStartPosition().currCol;
+        int startRow = move.getStartPosition().currRow;
+
+        //set old spot to null
+        testBoard.currBoard[startRow][startCol] = null;
+
+        //promote piece if needed
+        if(temp.pieceType != move.promo && move.promo != null) {
+            temp.setPieceType(move.promo);
+        }
+
+        int endCol = move.getEndPosition().currCol;
+        int endRow = move.getEndPosition().currRow;
+        testBoard.currBoard[endRow][endCol] = temp;
+        return isTestInCheck(temp.getTeamColor(), testBoard);
+
+    }
+
+    public ChessBoard createFakeBoard(ChessBoard toCopy) {
+        ChessBoard toReturn = new ChessBoard();
+
+        for (int i = 0; i < toCopy.currBoard.length; i++) {
+            for (int j = 0; j < toCopy.currBoard[i].length; j++) {
+                ChessPosition currPosition = new ChessPosition(i, j);
+                ChessPiece currPiece = toCopy.getPiece(currPosition);
+                if (currPiece != null) {
+                    // Create a deep copy of the ChessPiece
+                    ChessPiece copiedPiece = new ChessPiece(currPiece.getTeamColor(), currPiece.getPieceType());
+                    // Add the copied piece to the new board
+                    toReturn.addPiece(currPosition, copiedPiece);
+                }
+            }
+        }
+
+        return toReturn;
+    }
+
+    public boolean isTestInCheck(ChessGame.TeamColor teamColor, ChessBoard testBoard) {
+        ChessPosition kingPosition = findKingPosition(teamColor, testBoard);
+
+        // If king position is not found or there is no opponent piece threatening the king, not in check
+        return kingPosition != null && isKingThreatened(kingPosition, teamColor, testBoard);
+    }
+
+
 
     public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition, boolean isTest) {
 
