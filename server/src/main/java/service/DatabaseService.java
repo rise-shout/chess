@@ -27,6 +27,7 @@ public class DatabaseService {
     }
 
     public void clearDatabase() throws DataAccessException {
+
         // Clear users and games
         userDAO.clearAllUsers();
         gameDAO.clearAllGames();
@@ -48,5 +49,7 @@ public class DatabaseService {
 
         // Set the authTokenDAO map to the filtered valid tokens
         authTokenDAO.setAuthTokens(validTokens);
+
+
     }
 }

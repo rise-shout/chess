@@ -121,6 +121,7 @@ public class StandardAPITests {
 
         assertHttpForbidden(registerResult);
         assertAuthFieldsMissing(registerResult);
+
     }
 
     @Test

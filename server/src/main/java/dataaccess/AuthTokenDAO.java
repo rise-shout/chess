@@ -59,4 +59,7 @@ public class AuthTokenDAO {
     public void setAuthTokens(Map<String, AuthData> newTokens) {
         this.authTokenMap = new HashMap<>(newTokens);
     }
+
+    public void reset() {
+    }
 }
