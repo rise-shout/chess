@@ -5,6 +5,8 @@ import dataaccess.DataAccessException;
 import model.GameData;
 import server.GameListResult;
 import service.ErrorResult;
+import service.GameRequest;
+import service.GameResponse;
 import service.GameService;
 import spark.Request;
 import spark.Response;
@@ -13,37 +15,45 @@ import spark.Route;
 import java.util.List;
 
 public class GameController {
-    private final GameService gameService = new GameService();
-    private final Gson gson = new Gson();
+    private GameService gameService;
+    private Gson gson;
 
-    public GameController() {
-
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
+        this.gson = new Gson();
     }
 
-    public Route listGames = (Request req, Response res) -> {
+    public Route createGame = (Request req, Response res) -> {
         try {
-            // Extract the auth token from the header
             String authToken = req.headers("authorization");
-
-            // Validate the auth token
-            if (authToken == null || authToken.isEmpty()) {
-                res.status(401);
-                return gson.toJson(new ErrorResult("Error: unauthorized"));
-            }
-
-            // Call the service to list games
-            List<GameData> games = gameService.listGames(authToken);
-
-            // Return a successful response
+            GameRequest gameRequest = gson.fromJson(req.body(), GameRequest.class);
+            int gameId = gameService.createGame(authToken, gameRequest.gameName());
             res.status(200);
-            return gson.toJson(new GameListResult(games));
-
+            return gson.toJson(new GameResponse(gameId));
         } catch (DataAccessException e) {
             if (e.getMessage().contains("unauthorized")) {
                 res.status(401);
-                return gson.toJson(new ErrorResult(e.getMessage()));
+            } else if (e.getMessage().contains("bad request")) {
+                res.status(400);
+            } else {
+                res.status(500);
             }
-            res.status(500);
+            return gson.toJson(new ErrorResult("Error: " + e.getMessage()));
+        }
+    };
+
+    public Route listGames = (Request req, Response res) -> {
+        try {
+            String authToken = req.headers("authorization");
+            List<GameData> games = gameService.listGames(authToken);
+            res.status(200);
+            return gson.toJson(new GameListResult(games));
+        } catch (DataAccessException e) {
+            if (e.getMessage().contains("unauthorized")) {
+                res.status(401);
+            } else {
+                res.status(500);
+            }
             return gson.toJson(new ErrorResult("Error: " + e.getMessage()));
         }
     };

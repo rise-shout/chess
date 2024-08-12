@@ -9,7 +9,7 @@ import spark.Route;
 public class DatabaseController {
     private DatabaseService databaseService = null;
 
-    public DatabaseController() {
+    public DatabaseController(DatabaseService databaseService) {
         this.databaseService = new DatabaseService();
     }
 

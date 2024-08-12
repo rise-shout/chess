@@ -14,12 +14,15 @@ public class UserService {
 
     public UserService() {
         this.userDAO = new UserDAO();
-        this.authTokenDAO = new AuthTokenDAO();
+        this.authTokenDAO = AuthTokenDAO.getInstance();
+    }
+
+    public UserService(UserDAO userDAO, AuthTokenDAO authTokenDAO) {
+        this.userDAO = userDAO;
+        this.authTokenDAO = authTokenDAO;
     }
 
     public RegisterResult register(RegisterRequest request) throws DataAccessException {
-
-
         // Validate the request
         if (request.username() == null || request.username().isEmpty() ||
                 request.password() == null || request.password().isEmpty() ||
@@ -47,7 +50,6 @@ public class UserService {
         // Return the result
         return new RegisterResult(newUser.username(), authToken);
     }
-
 
     public LoginResult login(LoginRequest request) throws DataAccessException {
         // Retrieve the user by username
