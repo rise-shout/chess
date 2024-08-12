@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class AuthTokenDAO {
     private static AuthTokenDAO instance;
-    private final Map<String, AuthData> authTokenMap;
+    private Map<String, AuthData> authTokenMap;
 
     public AuthTokenDAO() {
         authTokenMap = new HashMap<>();
@@ -50,5 +50,13 @@ public class AuthTokenDAO {
         } catch (Exception e) {
             throw new DataAccessException("Failed to clear all auth tokens: " + e.getMessage());
         }
+    }
+
+    public Map<String, AuthData> getAllAuthTokens() {
+        return new HashMap<>(authTokenMap);
+    }
+
+    public void setAuthTokens(Map<String, AuthData> newTokens) {
+        this.authTokenMap = new HashMap<>(newTokens);
     }
 }

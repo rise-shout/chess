@@ -37,7 +37,7 @@ public class Server {
         Spark.delete("/session", userController.logout);
         Spark.get("/game", gameController.listGames);
         Spark.post("/game", gameController.createGame);
-        //Spark.put("/game", gameController.joinGame);
+        Spark.put("/game", gameController.joinGame);
 
         Spark.init();
         Spark.awaitInitialization();
