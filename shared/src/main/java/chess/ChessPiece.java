@@ -59,6 +59,9 @@ public class ChessPiece {
         if(pType == PieceType.BISHOP) {
             return bishopMoves(board, myPosition);
         }
+        if(pType == PieceType.KNIGHT) {
+            return knightMoves(board, myPosition);
+        }
 
         return null;
     }
@@ -135,6 +138,7 @@ public class ChessPiece {
 
     }
 
+    //Bishop-----------------------------------------------------------------------------------------------------------
     public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
         int startRow = myPosition.getRow();
         int startCol = myPosition.getColumn();
@@ -219,6 +223,74 @@ public class ChessPiece {
             }
             currRow++;
             currCol--;
+        }
+
+        return possibleMoves;
+    }
+
+    //Knight-----------------------------------------------------------------------------------------------------------
+    public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+
+         /*
+        | |x| |x| |
+        |x| | | |x|
+        | | |n| | |
+        |x| | | |x|
+        | |x| |x| |
+
+         */
+
+        int startRow = myPosition.getRow();
+        int startCol = myPosition.getColumn();
+
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+
+        //top closer moves
+        if(startRow >= 2) {
+            //left
+            if(startCol >= 3 && isValidMove(startRow-1, startCol-2, board)) {
+                possibleMoves.add(createMove(myPosition, startRow-1, startCol-2,null));
+            }
+            //right
+            if(startCol <= 6 && isValidMove(startRow-1, startCol+2, board)) {
+                possibleMoves.add(createMove(myPosition, startRow-1, startCol+2,null));
+            }
+        }
+
+        //top further moves
+        if(startRow >= 3) {
+            //left
+            if(startCol >= 2 && isValidMove(startRow-2, startCol-1, board)) {
+                possibleMoves.add(createMove(myPosition, startRow-2, startCol-1,null));
+            }
+            //right
+            if(startCol <= 7 && isValidMove(startRow-2, startCol+1, board)) {
+                possibleMoves.add(createMove(myPosition, startRow-2, startCol+1,null));
+            }
+        }
+
+        //bottom closer moves
+        if(startRow <= 7) {
+            //left
+            if(startCol >= 3 && isValidMove(startRow+1, startCol-2, board)) {
+                possibleMoves.add(createMove(myPosition, startRow+1, startCol-2,null));
+            }
+            //right
+            if(startCol <= 6 && isValidMove(startRow+1, startCol+2, board)) {
+                possibleMoves.add(createMove(myPosition, startRow+1, startCol+2,null));
+            }
+        }
+
+        //bottom further moves
+        if(startRow <= 6) {
+            //left
+            if(startCol >= 2 && isValidMove(startRow+2, startCol-1, board)) {
+                possibleMoves.add(createMove(myPosition, startRow+2, startCol-1,null));
+            }
+            //right
+            if(startCol <= 7 && isValidMove(startRow+2, startCol+1, board)) {
+                possibleMoves.add(createMove(myPosition, startRow+2, startCol+1,null));
+            }
         }
 
         return possibleMoves;
