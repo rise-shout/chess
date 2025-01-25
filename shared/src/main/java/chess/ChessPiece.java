@@ -68,6 +68,9 @@ public class ChessPiece {
         if(pType == PieceType.QUEEN) {
             return queenMoves(board, myPosition);
         }
+        if(pType == PieceType.PAWN) {
+            return pawnMoves(board, myPosition);
+        }
 
         return null;
     }
@@ -89,6 +92,22 @@ public class ChessPiece {
     public ChessMove createMove(ChessPosition startPosition, int endRow, int endCol, ChessPiece.PieceType promo) {
         ChessPosition endPosition = new ChessPosition(endRow, endCol);
         return new ChessMove(startPosition, endPosition, promo);
+    }
+
+    //this method checks if the pawn can move forward within the board to an open space (null)
+    public boolean isValidPawnMove(int row, int col, ChessBoard board) {
+        if(row >= 1 && col >= 1 && row <= 8 && col <= 8) {
+            return board.currBoard[row][col] == null;
+        }
+        return false;
+    }
+
+    //this checks if a pawn can capture diagonally using the special pawn rules of capture. does not check for promotion.
+    public boolean isValidPawnCapture(int row, int col, ChessBoard board) {
+        if(row >= 1 && col >= 1 && row <= 8 && col <= 8) {
+            return board.currBoard[row][col] != null && board.currBoard[row][col].getTeamColor() != color;
+        }
+        return false;
     }
 
     //King-----------------------------------------------------------------------------------------------------------
@@ -396,6 +415,104 @@ public class ChessPiece {
         return possibleMoves;
     }
 
+    //Pawn (special capture rules) ---------------------------------------------------------------------
+    public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+        int startRow = myPosition.getRow();
+        int startCol = myPosition.getColumn();
+
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+
+        //initial two space move-----------------------------------
+        //BLACK
+        if(color == ChessGame.TeamColor.BLACK && startRow == 7 && isValidPawnMove(startRow-1, startCol, board) && isValidPawnMove(startRow-2, startCol, board)) {
+            possibleMoves.add(createMove(myPosition, startRow-2, startCol, null));
+        }
+        //WHITE
+        if(color == ChessGame.TeamColor.WHITE && startRow == 2 && isValidPawnMove(startRow+1, startCol, board) && isValidPawnMove(startRow+2, startCol, board)) {
+            possibleMoves.add(createMove(myPosition, startRow+2, startCol, null));
+        }
+
+        //regular move (and promotion)------------------------
+        //BLACK
+        if(color == ChessGame.TeamColor.BLACK && isValidPawnMove(startRow-1, startCol, board)) {
+            if(startRow != 2) {
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol, null));
+            }
+            else {
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol, PieceType.BISHOP));
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol, PieceType.KNIGHT));
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol, PieceType.QUEEN));
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol, PieceType.ROOK));
+            }
+        }
+        //WHITE
+        if(color == ChessGame.TeamColor.WHITE && isValidPawnMove(startRow+1, startCol, board)) {
+            if(startRow != 7) {
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol, null));
+            }
+            else {
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol, PieceType.BISHOP));
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol, PieceType.KNIGHT));
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol, PieceType.QUEEN));
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol, PieceType.ROOK));
+            }
+        }
+
+        //capture (and promotion)----------------------------------------
+        //BLACK
+        //left
+        if(color == ChessGame.TeamColor.BLACK && isValidPawnCapture(startRow-1, startCol-1, board)) {
+            if(startRow != 2) {
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol-1, null));
+            }
+            else {
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol-1, PieceType.BISHOP));
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol-1, PieceType.KNIGHT));
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol-1, PieceType.QUEEN));
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol-1, PieceType.ROOK));
+            }
+        }
+        //right
+        if(color == ChessGame.TeamColor.BLACK && isValidPawnCapture(startRow-1, startCol+1, board)) {
+            if(startRow != 2) {
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol+1, null));
+            }
+            else {
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol+1, PieceType.BISHOP));
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol+1, PieceType.KNIGHT));
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol+1, PieceType.QUEEN));
+                possibleMoves.add(createMove(myPosition, startRow - 1, startCol+1, PieceType.ROOK));
+            }
+        }
+
+        //WHITE
+        //left
+        if(color == ChessGame.TeamColor.WHITE && isValidPawnCapture(startRow+1, startCol-1, board)) {
+            if(startRow != 7) {
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol-1, null));
+            }
+            else {
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol-1, PieceType.BISHOP));
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol-1, PieceType.KNIGHT));
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol-1, PieceType.QUEEN));
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol-1, PieceType.ROOK));
+            }
+        }
+        //right
+        if(color == ChessGame.TeamColor.BLACK && isValidPawnCapture(startRow+1, startCol+1, board)) {
+            if(startRow != 7) {
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol+1, null));
+            }
+            else {
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol+1, PieceType.BISHOP));
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol+1, PieceType.KNIGHT));
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol+1, PieceType.QUEEN));
+                possibleMoves.add(createMove(myPosition, startRow + 1, startCol+1, PieceType.ROOK));
+            }
+        }
+
+        return possibleMoves;
+    }
 
     @Override
     public boolean equals(Object o) {
