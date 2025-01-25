@@ -499,7 +499,7 @@ public class ChessPiece {
             }
         }
         //right
-        if(color == ChessGame.TeamColor.BLACK && isValidPawnCapture(startRow+1, startCol+1, board)) {
+        if(color == ChessGame.TeamColor.WHITE && isValidPawnCapture(startRow+1, startCol+1, board)) {
             if(startRow != 7) {
                 possibleMoves.add(createMove(myPosition, startRow + 1, startCol+1, null));
             }
