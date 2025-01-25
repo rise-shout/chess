@@ -23,10 +23,10 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        int xPos = position.getColumn();
-        int yPos = position.getRow();
+        int row = position.getRow();
+        int col = position.getColumn();
 
-        currBoard[xPos][yPos] = piece;
+        currBoard[row][col] = piece;
     }
 
     /**
@@ -37,10 +37,10 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        int xPos = position.getColumn();
-        int yPos = position.getRow();
+        int row = position.getRow();
+        int col = position.getColumn();
 
-        return currBoard[xPos][yPos];
+        return currBoard[row][col];
     }
 
     /**
