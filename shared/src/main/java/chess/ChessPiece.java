@@ -56,6 +56,9 @@ public class ChessPiece {
         if(pType == PieceType.KING) {
             return kingMoves(board, myPosition);
         }
+        if(pType == PieceType.BISHOP) {
+            return bishopMoves(board, myPosition);
+        }
 
         return null;
     }
@@ -68,16 +71,7 @@ public class ChessPiece {
     public boolean isValidMove(int row, int col, ChessBoard board) {
 
         if(row >= 1 && col >= 1 && row <= 8 && col <= 8) {
-            //System.out.println("Here's whats inside: " + board.currBoard[row][col]);
-            if (board.currBoard[row][col] == null) {
-                //System.out.println("Empty!");
-
-                return true;
-            }
-            else if( board.currBoard[row][col].getTeamColor() != color) {
-                //System.out.println("Capture!");
-                return true;
-            }
+            return board.currBoard[row][col] == null || board.currBoard[row][col].getTeamColor() != color;
         }
         return false;
     }
@@ -137,11 +131,98 @@ public class ChessPiece {
         }
 
         return possibleMoves;
-        //todo later: king cannot be put into check
+        //later: king cannot be put into check
 
     }
 
+    public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+        int startRow = myPosition.getRow();
+        int startCol = myPosition.getColumn();
 
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+
+        //up and left
+        int currRow = startRow;
+        int currCol = startCol;
+
+        while(currRow > 1 && currCol > 1) {
+            if(isValidMove(currRow -1, currCol-1, board)) {
+                possibleMoves.add(createMove(myPosition, currRow-1, currCol-1, null));
+
+                //capture
+                if(board.currBoard[currRow - 1][currCol-1] != null && board.currBoard[currRow - 1][currCol-1].getTeamColor() != color) {
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+            currRow--;
+            currCol--;
+        }
+
+        //up and right
+        currRow = startRow;
+        currCol = startCol;
+
+        while(currRow > 1 && currCol < 8) {
+            if(isValidMove(currRow - 1, currCol+1, board)) {
+                possibleMoves.add(createMove(myPosition, currRow-1, currCol+1, null));
+
+                //capture
+                if(board.currBoard[currRow - 1][currCol+1] != null && board.currBoard[currRow - 1][currCol+1].getTeamColor() != color) {
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+            currRow--;
+            currCol++;
+        }
+
+        //down and right
+        currRow = startRow;
+        currCol = startCol;
+
+        while(currRow < 8 && currCol < 8) {
+            if(isValidMove(currRow + 1, currCol+1, board)) {
+                possibleMoves.add(createMove(myPosition, currRow+1, currCol+1, null));
+
+                //capture
+                if(board.currBoard[currRow + 1][currCol+1] != null && board.currBoard[currRow + 1][currCol+1].getTeamColor() != color) {
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+            currRow++;
+            currCol++;
+        }
+
+        //down and left
+        currRow = startRow;
+        currCol = startCol;
+
+        while(currRow < 8 && currCol > 1) {
+            if(isValidMove(currRow + 1, currCol-1, board)) {
+                possibleMoves.add(createMove(myPosition, currRow+1, currCol-1, null));
+
+                //capture
+                if(board.currBoard[currRow + 1][currCol+1] != null && board.currBoard[currRow + 1][currCol-1].getTeamColor() != color) {
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+            currRow++;
+            currCol--;
+        }
+
+        return possibleMoves;
+    }
 
 
 
