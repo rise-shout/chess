@@ -65,6 +65,9 @@ public class ChessPiece {
         if(pType == PieceType.ROOK) {
             return rookMoves(board, myPosition);
         }
+        if(pType == PieceType.QUEEN) {
+            return queenMoves(board, myPosition);
+        }
 
         return null;
     }
@@ -383,6 +386,15 @@ public class ChessPiece {
         return possibleMoves;
     }
 
+    //Queen (uses the moves from rook and bishop)---------------------------------------------------------------------
+    public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+
+        possibleMoves.addAll(rookMoves(board, myPosition));
+        possibleMoves.addAll(bishopMoves(board, myPosition));
+
+        return possibleMoves;
+    }
 
 
     @Override
