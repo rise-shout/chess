@@ -127,11 +127,17 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
 
+        //check if it needs to be promoted
+        if(move.getPromotionPiece() != null) {
+            piece.setPieceType(move.getPromotionPiece());
+        }
 
         //set it to the new position
 
         gameBoard.currBoard[endRow][endCol] = piece;
         gameBoard.currBoard[startRow][startCol] = null;
+
+
 
         //change turn
         if (teamTurnColor == TeamColor.WHITE) {
