@@ -239,7 +239,7 @@ public class ChessPiece {
                 possibleMoves.add(createMove(myPosition, currRow+1, currCol-1, null));
 
                 //capture
-                if(board.currBoard[currRow + 1][currCol+1] != null && board.currBoard[currRow + 1][currCol-1].getTeamColor() != color) {
+                if(board.currBoard[currRow + 1][currCol-1] != null && board.currBoard[currRow + 1][currCol-1].getTeamColor() != color) {
                     break;
                 }
             }

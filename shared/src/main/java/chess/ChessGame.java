@@ -200,6 +200,8 @@ public class ChessGame {
         //ArrayList<ChessPiece> opposingPieces = new ArrayList<>();
         //ArrayList<Tuple> opposingPieces = new ArrayList<>();
 
+
+
         ChessPosition kingPosition = findKingPosition(teamColor, testBoard);
 
         for (int i = 1; i < testBoard.currBoard.length; i++) {
@@ -208,6 +210,7 @@ public class ChessGame {
                 if (currPiece != null && currPiece.getTeamColor() != teamColor) {
 
                     Collection<ChessMove> opponentMoves = new ArrayList<>();
+
                     opponentMoves = currPiece.pieceMoves(testBoard,new ChessPosition(i,j));
 
                     for(ChessMove testMove : opponentMoves) {
