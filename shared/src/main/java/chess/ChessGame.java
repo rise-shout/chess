@@ -283,7 +283,7 @@ public class ChessGame {
                     allyMoves = validMoves(new ChessPosition(i,j));
 
                     if(!allyMoves.isEmpty()) {
-                        System.out.println("POSSIBLE MOVES"); //there are moves to remove from check
+                        //System.out.println("POSSIBLE MOVES"); //there are moves to remove from check
                         return false;
 
                     }
@@ -318,7 +318,7 @@ public class ChessGame {
                     allyMoves = validMoves(new ChessPosition(i,j));
 
                     if(!allyMoves.isEmpty()) {
-                        System.out.println("POSSIBLE MOVES"); //there are moves to remove from check
+                        //System.out.println("POSSIBLE MOVES"); //there are moves to remove from check
                         return false;
 
                     }
