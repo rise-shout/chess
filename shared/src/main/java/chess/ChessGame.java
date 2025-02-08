@@ -115,6 +115,14 @@ public class ChessGame {
         ChessPiece piece = gameBoard.currBoard[startRow][startCol];
         gameBoard.currBoard[endRow][endCol] = piece;
         gameBoard.currBoard[startRow][startCol] = null;
+
+        //change turn
+        if (teamTurnColor == TeamColor.WHITE) {
+            teamTurnColor = TeamColor.BLACK;
+        }
+        else {
+            teamTurnColor = TeamColor.WHITE;
+        }
     }
     /**
      * Locates and returns the king's position (custom method)
