@@ -121,6 +121,10 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
 
+        if(piece.getTeamColor() != teamTurnColor) {
+            throw new InvalidMoveException();
+        }
+
         Collection<ChessMove> validPieceMoves = validMoves(new ChessPosition(startRow, startCol));
 
         if(!validPieceMoves.contains(move)) {
