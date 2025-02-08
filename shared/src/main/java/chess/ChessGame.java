@@ -303,7 +303,32 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return false; //TODO: implement
+        if(isInCheck(teamColor)) {
+            return false;
+        }
+
+        //run through all valid moves of the same team. If any end in removing check or checkmate, return false
+        for (int i = 1; i < gameBoard.currBoard.length; i++) {
+            for (int j = 1; j < gameBoard.currBoard.length; j++) {
+
+                ChessPiece currPiece = gameBoard.currBoard[i][j];
+
+                if (currPiece != null && currPiece.getTeamColor() == teamColor) {
+                    Collection<ChessMove> allyMoves = new ArrayList<>();
+                    allyMoves = validMoves(new ChessPosition(i,j));
+
+                    if(!allyMoves.isEmpty()) {
+                        System.out.println("POSSIBLE MOVES"); //there are moves to remove from check
+                        return false;
+
+                    }
+
+
+                }
+            }
+        }
+        return true;
+
     }
 
     /**
