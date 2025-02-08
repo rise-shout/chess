@@ -1,6 +1,9 @@
 package chess;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -15,6 +18,7 @@ public class ChessGame {
 
     public ChessGame() {
         //possibly need to call reset board
+        gameBoard.resetBoard();
     }
 
     /**
@@ -71,6 +75,24 @@ public class ChessGame {
         gameBoard.currBoard[endRow][endCol] = piece;
         gameBoard.currBoard[startRow][startCol] = null;
     }
+    /**
+     * Locates and returns the king's position (custom method)
+     *
+     * @param teamColor which team to find the king for
+     * @return ChessPosition of the king
+     */
+
+    public ChessPosition findKingPosition(TeamColor teamColor) {
+        for(int i = 1; i < gameBoard.currBoard.length; i++) {
+            for(int j = 1; j < gameBoard.currBoard.length; j++) {
+                ChessPiece currPiece = gameBoard.currBoard[i][j];
+                if(currPiece != null && currPiece.getTeamColor() == teamColor && currPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                    return new ChessPosition(i,j);
+                }
+            }
+        }
+        return null; //no king on board
+    }
 
     /**
      * Determines if the given team is in check
@@ -78,8 +100,40 @@ public class ChessGame {
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
+
+
+
     public boolean isInCheck(TeamColor teamColor) {
-        return false; //TODO; implement
+        /*
+        thoughts:
+
+        check all board pieces of opposite color and see if anything in their move set matches with the current king's position.
+         */
+
+        //add all opposing pieces to an arraylist and parallel location lists
+        //ArrayList<ChessPiece> opposingPieces = new ArrayList<>();
+        //ArrayList<Tuple> opposingPieces = new ArrayList<>();
+
+        ChessPosition kingPosition = findKingPosition(teamColor);
+
+        for (int i = 1; i < gameBoard.currBoard.length; i++) {
+            for (int j = 1; j < gameBoard.currBoard.length; j++) {
+                ChessPiece currPiece = gameBoard.currBoard[i][j];
+                if (currPiece != null && currPiece.getTeamColor() != teamColor) {
+
+                    Collection<ChessMove> opponentMoves = new ArrayList<>();
+                    opponentMoves = currPiece.pieceMoves(gameBoard,new ChessPosition(i,j));
+
+                    for(ChessMove testMove : opponentMoves) {
+                        if(testMove.getEndPosition().getRow() == kingPosition.getRow() && testMove.getEndPosition().getColumn() == kingPosition.getColumn()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false; //no moves overlap with the current king position
     }
 
     /**
@@ -119,5 +173,21 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return gameBoard;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ChessGame chessGame)) {
+            return false;
+        }
+        return teamTurnColor == chessGame.teamTurnColor && Objects.equals(gameBoard, chessGame.gameBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(teamTurnColor, gameBoard);
     }
 }
