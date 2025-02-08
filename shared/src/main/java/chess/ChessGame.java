@@ -53,7 +53,48 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        //find what piece is at that location
+        ChessPiece currPiece = gameBoard.currBoard[startPosition.getRow()][startPosition.getColumn()];
+
+        //create list of all potential moves before check/checkmate tests
+        Collection<ChessMove> allPossibleMoves = new ArrayList<>();
+        allPossibleMoves = currPiece.pieceMoves(gameBoard, startPosition);
+
+        //create a new list of valid moves
+        Collection<ChessMove> correctedMoves = new ArrayList<>();
+
+        //test each move to see if it results in a check
+        for(ChessMove testMove : allPossibleMoves) {
+
+            //create temp (fake) board
+            ChessBoard testBoard = new ChessBoard();
+            for(int i = 0; i < gameBoard.currBoard.length; i++) {
+                for(int j = 0; j < gameBoard.currBoard.length; j++) {
+                    testBoard.currBoard[i][j] = gameBoard.currBoard[i][j];
+                }
+            }
+
+            //make the testmove
+            //get the old position
+            int startRow = testMove.getStartPosition().getRow();
+            int startCol = testMove.getStartPosition().getColumn();
+
+            //set it to the new position
+            int endRow = testMove.getEndPosition().getRow();
+            int endCol = testMove.getEndPosition().getColumn();
+
+            ChessPiece piece = testBoard.currBoard[startRow][startCol];
+            testBoard.currBoard[endRow][endCol] = piece;
+            testBoard.currBoard[startRow][startCol] = null;
+
+            if(!isInCheck(currPiece.getTeamColor(), testBoard)) {
+                correctedMoves.add(testMove);
+            }
+
+        }
+
+        return correctedMoves;
+
     }
 
     /**
@@ -94,6 +135,18 @@ public class ChessGame {
         return null; //no king on board
     }
 
+    public ChessPosition findKingPosition(TeamColor teamColor, ChessBoard testBoard) {
+        for(int i = 1; i < testBoard.currBoard.length; i++) {
+            for(int j = 1; j < testBoard.currBoard.length; j++) {
+                ChessPiece currPiece = testBoard.currBoard[i][j];
+                if(currPiece != null && currPiece.getTeamColor() == teamColor && currPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                    return new ChessPosition(i,j);
+                }
+            }
+        }
+        return null; //no king on board
+    }
+
     /**
      * Determines if the given team is in check
      *
@@ -123,6 +176,39 @@ public class ChessGame {
 
                     Collection<ChessMove> opponentMoves = new ArrayList<>();
                     opponentMoves = currPiece.pieceMoves(gameBoard,new ChessPosition(i,j));
+
+                    for(ChessMove testMove : opponentMoves) {
+                        if(testMove.getEndPosition().getRow() == kingPosition.getRow() && testMove.getEndPosition().getColumn() == kingPosition.getColumn()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false; //no moves overlap with the current king position
+    }
+
+    public boolean isInCheck(TeamColor teamColor, ChessBoard testBoard) {
+        /*
+        thoughts:
+
+        check all board pieces of opposite color and see if anything in their move set matches with the current king's position.
+         */
+
+        //add all opposing pieces to an arraylist and parallel location lists
+        //ArrayList<ChessPiece> opposingPieces = new ArrayList<>();
+        //ArrayList<Tuple> opposingPieces = new ArrayList<>();
+
+        ChessPosition kingPosition = findKingPosition(teamColor, testBoard);
+
+        for (int i = 1; i < testBoard.currBoard.length; i++) {
+            for (int j = 1; j < testBoard.currBoard.length; j++) {
+                ChessPiece currPiece = testBoard.currBoard[i][j];
+                if (currPiece != null && currPiece.getTeamColor() != teamColor) {
+
+                    Collection<ChessMove> opponentMoves = new ArrayList<>();
+                    opponentMoves = currPiece.pieceMoves(testBoard,new ChessPosition(i,j));
 
                     for(ChessMove testMove : opponentMoves) {
                         if(testMove.getEndPosition().getRow() == kingPosition.getRow() && testMove.getEndPosition().getColumn() == kingPosition.getColumn()) {
