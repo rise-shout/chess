@@ -1,5 +1,6 @@
 import chess.*;
 import server.Server;
+import spark.Spark;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,5 +12,6 @@ public class Main {
         int port = server.run(8080);
 
         System.out.println("Server is running on port: " + port);
+        System.out.println(Spark.routes());
     }
 }
