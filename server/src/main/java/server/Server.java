@@ -9,9 +9,15 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
+        DatabaseController dbController = new DatabaseController();
+        //UserController userController = new UserController();
+        //GameController gameController = new GameController();
 
-        //This line initializes the server and can be removed once you have a functioning endpoint 
+        // Register your endpoints and handle exceptions here.
+        // Register routes
+        Spark.delete("/db", dbController.clearDatabase);
+
+        //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
 
         Spark.awaitInitialization();
