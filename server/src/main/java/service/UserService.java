@@ -18,6 +18,15 @@ public class UserService {
     }
 
     public RegisterResult register(RegisterRequest request) throws DataAccessException {
+
+
+        // Validate the request
+        if (request.username() == null || request.username().isEmpty() ||
+                request.password() == null || request.password().isEmpty() ||
+                request.email() == null || request.email().isEmpty()) {
+            throw new DataAccessException("Error: bad request");
+        }
+
         // Check if the username is already taken
         UserData existingUser = userDAO.getUser(request.username());
         if (existingUser != null) {
@@ -39,6 +48,7 @@ public class UserService {
         return new RegisterResult(newUser.username(), authToken);
     }
 
+
     public LoginResult login(LoginRequest request) throws DataAccessException {
         // Retrieve the user by username
         UserData user = userDAO.getUser(request.username());
@@ -57,7 +67,14 @@ public class UserService {
         return new LoginResult(user.username(), authToken);
     }
 
-    public void logout(AuthData authData) throws DataAccessException {
-        // Implement user logout logic
+    public void logout(String authToken) throws DataAccessException {
+        // Check if the auth token exists
+        AuthData authData = authTokenDAO.getAuth(authToken);
+        if (authData == null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        // Delete the auth token to log out the user
+        authTokenDAO.deleteAuth(authToken);
     }
 }

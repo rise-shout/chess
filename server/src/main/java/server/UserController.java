@@ -22,7 +22,9 @@ public class UserController {
             RegisterRequest registerRequest = gson.fromJson(req.body(), RegisterRequest.class);
 
             // Validate the request (you might want to add more validation here)
-            if (registerRequest.username().isEmpty() || registerRequest.password().isEmpty() || registerRequest.email().isEmpty()) {
+            if (registerRequest.username() == null || registerRequest.username().isEmpty() ||
+                    registerRequest.password() == null || registerRequest.password().isEmpty() ||
+                    registerRequest.email() == null || registerRequest.email().isEmpty()) {
                 res.status(400);
                 return gson.toJson(new ErrorResult("Error: bad request"));
             }
@@ -55,6 +57,34 @@ public class UserController {
             // Return a successful response
             res.status(200);
             return gson.toJson(result);
+
+        } catch (DataAccessException e) {
+            if (e.getMessage().contains("unauthorized")) {
+                res.status(401);
+                return gson.toJson(new ErrorResult(e.getMessage()));
+            }
+            res.status(500);
+            return gson.toJson(new ErrorResult("Error: " + e.getMessage()));
+        }
+    };
+
+    public Route logout = (Request req, Response res) -> {
+        try {
+            // Extract the auth token from the header
+            String authToken = req.headers("authorization");
+
+            // Validate the auth token
+            if (authToken == null || authToken.isEmpty()) {
+                res.status(401);
+                return gson.toJson(new ErrorResult("Error: unauthorized"));
+            }
+
+            // Call the service to log out the user
+            userService.logout(authToken);
+
+            // Return a successful response
+            res.status(200);
+            return "{}"; // Empty JSON response
 
         } catch (DataAccessException e) {
             if (e.getMessage().contains("unauthorized")) {
