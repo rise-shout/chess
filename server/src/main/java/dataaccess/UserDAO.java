@@ -6,10 +6,10 @@ import java.util.Map;
 
 public class UserDAO {
     // In-memory database simulation
-    private final Map<String, UserData> userMap;
+    private static Map<String, UserData> userMap;
 
     public UserDAO() {
-        this.userMap = new HashMap<>();
+        userMap = new HashMap<>();
     }
 
     // Method to clear all users

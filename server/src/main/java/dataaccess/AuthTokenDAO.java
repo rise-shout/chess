@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AuthTokenDAO {
-    private final Map<String, AuthData> authTokenMap;
+    private static Map<String, AuthData> authTokenMap;
 
     public AuthTokenDAO() {
-        this.authTokenMap = new HashMap<>();
+        authTokenMap = new HashMap<>();
     }
 
     public void insertAuth(AuthData authData) throws DataAccessException {
