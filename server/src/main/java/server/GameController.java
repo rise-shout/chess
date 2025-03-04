@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import model.GameData;
 import server.GameListResult;
-import service.ErrorResult;
-import service.GameRequest;
-import service.GameResponse;
-import service.GameService;
+import service.*;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -55,6 +52,49 @@ public class GameController {
                 res.status(500);
             }
             return gson.toJson(new ErrorResult("Error: " + e.getMessage()));
+        }
+    };
+
+    public Route joinGame = (Request req, Response res) -> {
+        try {
+            String authToken = req.headers("authorization");
+
+            // Validate the auth token
+            if (authToken == null || authToken.isEmpty()) {
+                res.status(401);
+                return gson.toJson(new ErrorResult("Error: unauthorized"));
+            }
+
+            // Deserialize the request body into a JoinGameRequest
+            JoinGameRequest joinGameRequest = gson.fromJson(req.body(), JoinGameRequest.class);
+
+            // Validate the request
+            if (joinGameRequest == null ||  joinGameRequest.playerColor() == null || joinGameRequest.playerColor().isEmpty() || joinGameRequest.gameID() <= 0) {
+                res.status(400);
+                return gson.toJson(new ErrorResult("Error: bad request"));
+            }
+
+            // Call the service to join the game
+            gameService.joinGame(authToken, joinGameRequest.gameID(), joinGameRequest.playerColor());
+
+            // Return a successful response
+            res.status(200);
+            return "{}"; // Empty JSON response
+
+        } catch (DataAccessException e) {
+            if (e.getMessage().contains("unauthorized")) {
+                res.status(401);
+                return gson.toJson(new ErrorResult(e.getMessage()));
+            } else if (e.getMessage().contains("bad request")) {
+                res.status(400);
+                return gson.toJson(new ErrorResult(e.getMessage()));
+            } else if (e.getMessage().contains("already taken")) {
+                res.status(403);
+                return gson.toJson(new ErrorResult(e.getMessage()));
+            } else {
+                res.status(500);
+                return gson.toJson(new ErrorResult("Error: " + e.getMessage()));
+            }
         }
     };
 }

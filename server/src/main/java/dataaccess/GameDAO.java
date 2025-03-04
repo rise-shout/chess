@@ -27,6 +27,31 @@ public class GameDAO {
         }
     }
 
+    public GameData getGameById(int gameId) throws DataAccessException {
+        try {
+            return gameList.stream()
+                    .filter(game -> game.gameID() == gameId)
+                    .findFirst()
+                    .orElse(null);
+        } catch (Exception e) {
+            throw new DataAccessException("Failed to retrieve game: " + e.getMessage());
+        }
+    }
+
+    public void updateGame(GameData updatedGame) throws DataAccessException {
+        try {
+            for (int i = 0; i < gameList.size(); i++) {
+                if (gameList.get(i).gameID() == updatedGame.gameID()) {
+                    gameList.set(i, updatedGame);
+                    return;
+                }
+            }
+            throw new DataAccessException("Game not found");
+        } catch (Exception e) {
+            throw new DataAccessException("Failed to update game: " + e.getMessage());
+        }
+    }
+
     // Method to retrieve all games (for reference)
     public List<GameData> getAllGames() throws DataAccessException {
         try {

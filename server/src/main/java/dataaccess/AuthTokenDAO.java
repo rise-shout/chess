@@ -51,4 +51,12 @@ public class AuthTokenDAO {
             throw new DataAccessException("Failed to clear all auth tokens: " + e.getMessage());
         }
     }
+
+    public Map<String, AuthData> getAllAuthTokens() {
+        return new HashMap<>(authTokenMap);
+    }
+
+    public void setAuthTokens(Map<String, AuthData> newTokens) {
+        authTokenMap = new HashMap<>(newTokens);
+    }
 }
