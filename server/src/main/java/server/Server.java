@@ -1,6 +1,15 @@
 package server;
 
-import spark.*;
+import dataaccess.AuthTokenDAO;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
+import server.DatabaseController;
+import server.GameController;
+import server.UserController;
+import service.DatabaseService;
+import service.GameService;
+import service.UserService;
+import spark.Spark;
 
 public class Server {
 
@@ -9,27 +18,33 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        DatabaseController dbController = new DatabaseController();
-        UserController userController = new UserController();
-        GameController gameController = new GameController();
+        UserDAO userDAO = new UserDAO();
+        GameDAO gameDAO = new GameDAO();
+        AuthTokenDAO authTokenDAO = AuthTokenDAO.getInstance();
 
-        // Register your endpoints and handle exceptions here.
+        UserService userService = new UserService(userDAO, authTokenDAO);
+        GameService gameService = new GameService(gameDAO, authTokenDAO);
+
+        UserController userController = new UserController(userService);
+        GameController gameController = new GameController(gameService);
+
+        DatabaseController dbController = new DatabaseController(new DatabaseService(userDAO, gameDAO, authTokenDAO));
+
         // Register routes
         Spark.delete("/db", dbController.clearDatabase);
         Spark.post("/user", userController.register);
         Spark.post("/session", userController.login);
         Spark.delete("/session", userController.logout);
         Spark.get("/game", gameController.listGames);
+        Spark.post("/game", gameController.createGame);
+        //Spark.put("/game", gameController.joinGame);
 
-        //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
-
         Spark.awaitInitialization();
         return Spark.port();
     }
 
     public void stop() {
         Spark.stop();
-        Spark.awaitStop();
     }
 }

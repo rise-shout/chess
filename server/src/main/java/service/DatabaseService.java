@@ -16,6 +16,12 @@ public class DatabaseService {
         this.authTokenDAO = new AuthTokenDAO();
     }
 
+    public DatabaseService(UserDAO userDAO, GameDAO gameDAO, AuthTokenDAO authTokenDAO) {
+        this.userDAO = userDAO;
+        this.gameDAO = gameDAO;
+        this.authTokenDAO =authTokenDAO;
+    }
+
     public void clearDatabase() throws DataAccessException {
         userDAO.clearAllUsers();
         gameDAO.clearAllGames();

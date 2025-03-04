@@ -5,15 +5,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AuthTokenDAO {
+    private static AuthTokenDAO instance;
     private static Map<String, AuthData> authTokenMap;
 
     public AuthTokenDAO() {
         authTokenMap = new HashMap<>();
     }
 
+    public static AuthTokenDAO getInstance() {
+        if (instance == null) {
+            instance = new AuthTokenDAO();
+        }
+        return instance;
+    }
+
     public void insertAuth(AuthData authData) throws DataAccessException {
         try {
             authTokenMap.put(authData.authToken(), authData);
+            System.out.println("Auth token stored: " + authData.authToken());
         } catch (Exception e) {
             throw new DataAccessException("Failed to insert auth token: " + e.getMessage());
         }
@@ -35,7 +44,6 @@ public class AuthTokenDAO {
         }
     }
 
-    // Method to clear all auth tokens
     public void clearAllAuthTokens() throws DataAccessException {
         try {
             authTokenMap.clear();
