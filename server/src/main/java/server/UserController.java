@@ -16,8 +16,7 @@ public class UserController {
 
     }
 
-    public final Route register = (Request req, Response res) -> {
-        res.type("application/json");
+    public Route register = (Request req, Response res) -> {
         try {
             // Deserialize the request body into a RegisterRequest
             RegisterRequest registerRequest = gson.fromJson(req.body(), RegisterRequest.class);

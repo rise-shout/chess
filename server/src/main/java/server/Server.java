@@ -23,10 +23,6 @@ public class Server {
         Spark.init();
 
         Spark.awaitInitialization();
-
-
-
-
         return Spark.port();
     }
 
