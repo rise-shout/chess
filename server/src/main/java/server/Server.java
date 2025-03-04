@@ -11,7 +11,7 @@ public class Server {
 
         DatabaseController dbController = new DatabaseController();
         UserController userController = new UserController();
-        //GameController gameController = new GameController();
+        GameController gameController = new GameController();
 
         // Register your endpoints and handle exceptions here.
         // Register routes
@@ -19,6 +19,7 @@ public class Server {
         Spark.post("/user", userController.register);
         Spark.post("/session", userController.login);
         Spark.delete("/session", userController.logout);
+        Spark.get("/game", gameController.listGames);
 
         //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
