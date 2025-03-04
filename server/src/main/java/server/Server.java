@@ -17,13 +17,16 @@ public class Server {
         // Register routes
         Spark.delete("/db", dbController.clearDatabase);
         Spark.post("/user", userController.register);
+        Spark.post("/session", userController.login);
 
         //This line initializes the server and can be removed once you have a functioning endpoint
-        System.out.println(Spark.routes());
-
-        //Spark.init();
+        Spark.init();
 
         Spark.awaitInitialization();
+
+
+
+
         return Spark.port();
     }
 

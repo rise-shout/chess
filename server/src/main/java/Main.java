@@ -9,9 +9,14 @@ public class Main {
 
         // Create a server object and run it on port 8080
         Server server = new Server();
-        int port = server.run(8080);
 
+
+        int port = server.run(8080);
         System.out.println("Server is running on port: " + port);
-        System.out.println(Spark.routes());
+
+        System.out.println("Available routes:");
+        Spark.routes().forEach(System.out::println);
+
+
     }
 }

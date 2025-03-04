@@ -39,10 +39,22 @@ public class UserService {
         return new RegisterResult(newUser.username(), authToken);
     }
 
-    public AuthData login(UserData user) throws DataAccessException {
-        // Implement user login logic
-        System.out.println("HERE");
-        return null;
+    public LoginResult login(LoginRequest request) throws DataAccessException {
+        // Retrieve the user by username
+        UserData user = userDAO.getUser(request.username());
+
+        // Check if the user exists and the password matches
+        if (user == null || !user.password().equals(request.password())) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        // Generate a new auth token
+        String authToken = UUID.randomUUID().toString();
+        AuthData authData = new AuthData(authToken, user.username());
+        authTokenDAO.insertAuth(authData);
+
+        // Return the result
+        return new LoginResult(user.username(), authToken);
     }
 
     public void logout(AuthData authData) throws DataAccessException {

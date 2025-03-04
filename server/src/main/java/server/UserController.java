@@ -2,10 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import service.ErrorResult;
-import service.RegisterRequest;
-import service.RegisterResult;
-import service.UserService;
+import service.*;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -19,8 +16,8 @@ public class UserController {
 
     }
 
-    public Route register = (Request req, Response res) -> {
-        System.out.println("HERE");
+    public final Route register = (Request req, Response res) -> {
+        res.type("application/json");
         try {
             // Deserialize the request body into a RegisterRequest
             RegisterRequest registerRequest = gson.fromJson(req.body(), RegisterRequest.class);
@@ -41,6 +38,28 @@ public class UserController {
         } catch (DataAccessException e) {
             if (e.getMessage().contains("already taken")) {
                 res.status(403);
+                return gson.toJson(new ErrorResult(e.getMessage()));
+            }
+            res.status(500);
+            return gson.toJson(new ErrorResult("Error: " + e.getMessage()));
+        }
+    };
+
+    public Route login = (Request req, Response res) -> {
+        try {
+            // Deserialize the request body into a LoginRequest
+            LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
+
+            // Call the service to log in the user
+            LoginResult result = userService.login(loginRequest);
+
+            // Return a successful response
+            res.status(200);
+            return gson.toJson(result);
+
+        } catch (DataAccessException e) {
+            if (e.getMessage().contains("unauthorized")) {
+                res.status(401);
                 return gson.toJson(new ErrorResult(e.getMessage()));
             }
             res.status(500);
