@@ -1,7 +1,10 @@
 package dataaccess;
 
 import model.UserData;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UserDAO {
@@ -42,5 +45,12 @@ public class UserDAO {
         }
     }
 
-    // Additional methods as needed for other functionalities...
+    // Method to get all users
+    public List<UserData> getAllUsers() throws DataAccessException {
+        try {
+            return new ArrayList<>(userMap.values()); // Convert the values of the map to a list
+        } catch (Exception e) {
+            throw new DataAccessException("Failed to retrieve users: " + e.getMessage());
+        }
+    }
 }
