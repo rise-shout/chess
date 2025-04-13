@@ -23,7 +23,6 @@ public class MySqlGameDataAccess implements GameDataAccess {
 
     @Override
     public int insertGame(GameData game) throws DataAccessException {
-
         var statement = "INSERT INTO game (player_white, player_black, game_name, game_state) VALUES (?, ?, ?, ?)";
         var gameState = new Gson().toJson(game); // Serialize game state
         return executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), gameState);
@@ -57,9 +56,25 @@ public class MySqlGameDataAccess implements GameDataAccess {
 
     @Override
     public void updateGame(GameData updatedGame) throws DataAccessException {
-        var statement = "UPDATE game SET player_white=?, player_black=?, game_name=?, game_state=? WHERE id=?";
-        var gameState = new Gson().toJson(updatedGame);
-        executeUpdate(statement, updatedGame.whiteUsername(), updatedGame.blackUsername(), updatedGame.gameName(), gameState, updatedGame.gameID());
+        if(gameExists(updatedGame.gameName())) {
+            var statement = "UPDATE game SET player_white=?, player_black=?, game_name=?, game_state=? WHERE id=?";
+            var gameState = new Gson().toJson(updatedGame);
+            executeUpdate(statement, updatedGame.whiteUsername(), updatedGame.blackUsername(), updatedGame.gameName(), gameState, updatedGame.gameID());
+        }
+        else {
+            throw new DataAccessException("Game not found");
+        }
+    }
+
+    public void updateGame(GameData updatedGame, GameData oldGame) throws DataAccessException {
+        if(gameExists(oldGame.gameName())) {
+            var statement = "UPDATE game SET player_white=?, player_black=?, game_name=?, game_state=? WHERE id=?";
+            var gameState = new Gson().toJson(updatedGame);
+            executeUpdate(statement, updatedGame.whiteUsername(), updatedGame.blackUsername(), updatedGame.gameName(), gameState, updatedGame.gameID());
+        }
+        else {
+            throw new DataAccessException("Game not found");
+        }
     }
 
     @Override
@@ -92,7 +107,7 @@ public class MySqlGameDataAccess implements GameDataAccess {
       id INT AUTO_INCREMENT PRIMARY KEY,
       player_white VARCHAR(256) DEFAULT NULL,
       player_black VARCHAR(256) DEFAULT NULL,
-      game_name VARCHAR(256) NOT NULL,
+      game_name VARCHAR(256) NOT NULL UNIQUE,
       game_state TEXT DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
     """
@@ -103,7 +118,26 @@ public class MySqlGameDataAccess implements GameDataAccess {
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
+
         return updateDoer(statement, params);
+    }
+
+    public boolean gameExists(String gameName) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT COUNT(*) FROM game WHERE game_name=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, gameName);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        // If COUNT(*) > 0, the game already exists
+                        return rs.getInt(1) > 0;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to check if game exists: " + e.getMessage());
+        }
+        return false; // Game doesn't exist
     }
 
 
