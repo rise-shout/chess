@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserDAO {
+public class UserDAO implements UserDataAccess{
     // In-memory database simulation
     private static Map<String, UserData> userMap;
 

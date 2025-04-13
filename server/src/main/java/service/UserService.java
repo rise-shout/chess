@@ -3,13 +3,14 @@ package service;
 import dataaccess.AuthTokenDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
+import dataaccess.UserDataAccess;
 import model.AuthData;
 import model.UserData;
 
 import java.util.UUID;
 
 public class UserService {
-    private final UserDAO userDAO;
+    private final UserDataAccess userDAO;
     private final AuthTokenDAO authTokenDAO;
 
     public UserService() {
@@ -17,7 +18,7 @@ public class UserService {
         this.authTokenDAO = AuthTokenDAO.getInstance();
     }
 
-    public UserService(UserDAO userDAO, AuthTokenDAO authTokenDAO) {
+    public UserService(UserDataAccess userDAO, AuthTokenDAO authTokenDAO) {
         this.userDAO = userDAO;
         this.authTokenDAO = authTokenDAO;
     }

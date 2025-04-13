@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DatabaseService {
-    private final UserDAO userDAO;
+    private final UserDataAccess userDAO;
     private final GameDataAccess gameDAOVar;
     private final AuthTokenDAO authTokenDAO;
 
@@ -17,7 +17,7 @@ public class DatabaseService {
         this.authTokenDAO = new AuthTokenDAO();
     }
 
-    public DatabaseService(UserDAO userDAO, GameDataAccess gameDAO, AuthTokenDAO authTokenDAO) {
+    public DatabaseService(UserDataAccess userDAO, GameDataAccess gameDAO, AuthTokenDAO authTokenDAO) {
         this.userDAO = userDAO;
         this.gameDAOVar = gameDAO;
         this.authTokenDAO =authTokenDAO;
