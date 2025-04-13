@@ -62,6 +62,7 @@ public class UserServiceTest {
     // Positive test case for login
     @Test
     public void testLoginSuccess() throws DataAccessException {
+
         RegisterRequest registerRequest = new RegisterRequest("testUser", "testPassword", "test@mail.com");
         userService.register(registerRequest);
 

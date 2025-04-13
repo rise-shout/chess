@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +31,9 @@ public class UserDAO implements UserDataAccess{
             throw new DataAccessException("User already exists with username: " + user.username());
         }
         try {
-            userMap.put(user.username(), user);
+            //need to hash password!
+            UserData hashedPWUser = new UserData(user.username(), BCrypt.hashpw(user.password(), BCrypt.gensalt()), user.email());
+            userMap.put(user.username(), hashedPWUser);
         } catch (Exception e) {
             throw new DataAccessException("Failed to insert user: " + e.getMessage());
         }
