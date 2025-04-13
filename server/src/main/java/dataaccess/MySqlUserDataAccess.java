@@ -21,11 +21,7 @@ import org.mindrot.jbcrypt.BCrypt;
 public class MySqlUserDataAccess implements UserDataAccess{
 
     public MySqlUserDataAccess() {
-        try {
-            configureDatabase();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 
 
