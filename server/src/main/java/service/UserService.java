@@ -41,7 +41,8 @@ public class UserService {
         }
 
         // Create a new UserData object
-        UserData newUser = new UserData(request.username(), request.password(), request.email());
+        String hashedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
+        UserData newUser = new UserData(request.username(), hashedPassword, request.email());
 
         // Insert the new user into the database
         userDAO.insertUser(newUser);
@@ -60,11 +61,18 @@ public class UserService {
         UserData user = userDAO.getUser(request.username());
 
         // Check if the user exists and the password matches
+        System.out.println("About to check password");
+        try {
+            if (user == null || !BCrypt.checkpw(request.password(), user.password())) {
+                System.out.println("No match!");
 
-        if (user == null || !BCrypt.checkpw(request.password(), user.password())) {
-            System.out.println("No match!");
-
-            throw new DataAccessException("Error: unauthorized");
+                throw new DataAccessException("Error: unauthorized");
+            }
+            System.out.println("Password match!");
+        } catch (IllegalArgumentException e) {
+            System.out.println(request.password());
+            System.out.println(user.password());
+            System.out.println(e);
         }
 
         // Generate a new auth token
