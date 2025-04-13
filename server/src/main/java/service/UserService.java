@@ -9,6 +9,9 @@ import model.UserData;
 
 import java.util.UUID;
 
+
+import org.mindrot.jbcrypt.BCrypt;
+
 public class UserService {
     private final UserDataAccess userDAO;
     private final AuthTokenDAO authTokenDAO;
@@ -57,7 +60,10 @@ public class UserService {
         UserData user = userDAO.getUser(request.username());
 
         // Check if the user exists and the password matches
-        if (user == null || !user.password().equals(request.password())) {
+
+        if (user == null || !BCrypt.checkpw(request.password(), user.password())) {
+            System.out.println("No match!");
+
             throw new DataAccessException("Error: unauthorized");
         }
 

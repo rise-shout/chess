@@ -28,10 +28,6 @@ public class MySqlUserDataAccess implements UserDataAccess{
         }
     }
 
-    public void storeUserPassword(String username, String clearTextPassword, String email) throws DataAccessException {
-        String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
-        insertUser(new UserData(username, hashedPassword, email));
-    }
 
     @Override
     public void clearAllUsers() throws DataAccessException {
@@ -41,17 +37,50 @@ public class MySqlUserDataAccess implements UserDataAccess{
 
     @Override
     public void insertUser(UserData user) throws DataAccessException {
-
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        var statement = "INSERT INTO user (username, password_hash, email) VALUES (?, ?, ?)";
+        executeUpdate(statement, user.username(), hashedPassword, user.email());
     }
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT username, password_hash, email FROM user WHERE username = ?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        String passwordHash = rs.getString("password_hash");
+                        String email = rs.getString("email");
+                        return new UserData(username, passwordHash, email);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to retrieve user: " + e.getMessage());
+        }
         return null;
     }
 
     @Override
     public List<UserData> getAllUsers() throws DataAccessException {
-        return null;
+        List<UserData> users = new ArrayList<>();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT username, password_hash, email FROM user";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String username = rs.getString("username");
+                        String passwordHash = rs.getString("password_hash");
+                        String email = rs.getString("email");
+                        users.add(new UserData(username, passwordHash, email));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to retrieve users: " + e.getMessage());
+        }
+        return users;
     }
 
     private final String[] createStatements = {
