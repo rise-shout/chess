@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.*;
 import java.sql.*;
 
+import static dataaccess.MySqlUserDataAccess.updateDoer;
+
 
 public class MySqlGameDataAccess implements GameDataAccess {
 
@@ -50,8 +52,6 @@ public class MySqlGameDataAccess implements GameDataAccess {
         String whiteUsername = rs.getString("player_white");
         String blackUsername = rs.getString("player_black");
         String gameName = rs.getString("game_name");
-        //String gameStateJson = rs.getString("game_state");
-        //GameData game = new Gson().fromJson(gameStateJson, GameData.class); // Deserialize game state
         return new GameData(id, whiteUsername, blackUsername, gameName);
     }
 
@@ -99,41 +99,11 @@ public class MySqlGameDataAccess implements GameDataAccess {
     };
 
     private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException("Unable to configure database: " + ex.getMessage());
-        }
+        MySqlUserDataAccess.databaseMaker(createStatements);
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    switch (param) {
-                        case String p -> ps.setString(i + 1, p);
-                        case Integer p -> ps.setInt(i + 1, p);
-                        case null -> ps.setNull(i + 1, Types.NULL);
-                        default -> {
-                        }
-                    }
-                }
-                ps.executeUpdate();
-                var rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-                return 0;
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Database update failed: " + e.getMessage());
-        }
+        return updateDoer(statement, params);
     }
 
 

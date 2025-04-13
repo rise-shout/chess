@@ -2,9 +2,6 @@ package server;
 
 import dataaccess.*;
 
-import server.DatabaseController;
-import server.GameController;
-import server.UserController;
 import service.DatabaseService;
 import service.GameService;
 import service.UserService;
@@ -34,8 +31,9 @@ public class Server {
 
         // Choose which DAO to use based on storageType
         userDAO = new MySqlUserDataAccess(); // Assuming MySqlUserDataAccess is similar to MySqlGameDataAccess
-        if ("sql".equalsIgnoreCase(storageType)) gameDAO = new MySqlGameDataAccess();
-        else {
+        if ("sql".equalsIgnoreCase(storageType)) {
+            gameDAO = new MySqlGameDataAccess();
+        } else {
             // Use in-memory or another storage implementation (make sure to implement these)
             gameDAO = new GameDAO();
             userDAO = new UserDAO();

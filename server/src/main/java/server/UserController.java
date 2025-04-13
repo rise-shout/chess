@@ -8,8 +8,8 @@ import spark.Response;
 import spark.Route;
 
 public class UserController {
-    private UserService userService = null;
-    private Gson gson = null;
+    private UserService userService;
+    private Gson gson;
 
     public UserController(UserService userService) {
         this.userService = userService;

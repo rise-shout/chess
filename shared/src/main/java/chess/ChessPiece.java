@@ -18,7 +18,6 @@ public class ChessPiece {
         color = pieceColor;
         pType = type;
     }
-
     /**
      * The various different chess piece options
      */
@@ -30,14 +29,12 @@ public class ChessPiece {
         ROOK,
         PAWN
     }
-
     /**
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
         return color;
     }
-
     /**
      * @return which type of chess piece this piece is
      */
@@ -48,8 +45,6 @@ public class ChessPiece {
     public void setPieceType(PieceType newType) {
         pType = newType;
     }
-
-
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -79,12 +74,6 @@ public class ChessPiece {
 
         return null;
     }
-
-    //helper methods-------------------------------------------------------------------------------------------------
-    /*
-    This method checks if a move is valid, i.e. if it's within the boundaries of the game board. It then checks that the
-    spot is either null (empty) or occupied by an enemy piece (resulting in a capture)
-     */
     public boolean isValidMove(int row, int col, ChessBoard board) {
 
         if(row >= 1 && col >= 1 && row <= 8 && col <= 8) {
@@ -92,21 +81,17 @@ public class ChessPiece {
         }
         return false;
     }
-
-    //this method creates and returns a new move object, so I don't have to type it so many times.
     public ChessMove createMove(ChessPosition startPosition, int endRow, int endCol, ChessPiece.PieceType promo) {
         ChessPosition endPosition = new ChessPosition(endRow, endCol);
         return new ChessMove(startPosition, endPosition, promo);
     }
 
-    //this method checks if the pawn can move forward within the board to an open space (null)
     public boolean isValidPawnMove(int row, int col, ChessBoard board) {
         if(row >= 1 && col >= 1 && row <= 8 && col <= 8) {
             return board.currBoard[row][col] == null;
         }
         return false;
     }
-
     //this checks if a pawn can capture diagonally using the special pawn rules of capture. does not check for promotion.
     public boolean isValidPawnCapture(int row, int col, ChessBoard board) {
         if(row >= 1 && col >= 1 && row <= 8 && col <= 8) {
@@ -330,17 +315,13 @@ public class ChessPiece {
     public Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
         int startRow = myPosition.getRow();
         int startCol = myPosition.getColumn();
-
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-
         //go up
         int currRow = startRow;
         int currCol = startCol;
-
         while(currRow > 1) {
             if(isValidMove(currRow -1, currCol, board)) {
                 possibleMoves.add(createMove(myPosition, currRow-1, currCol, null));
-
                 //capture
                 if(board.currBoard[currRow - 1][currCol] != null && board.currBoard[currRow - 1][currCol].getTeamColor() != color) {
                     break;
@@ -351,14 +332,11 @@ public class ChessPiece {
             }
             currRow--;
         }
-
         //go down
         currRow = startRow;
-
         while(currRow < 8) {
             if(isValidMove(currRow +1, currCol, board)) {
                 possibleMoves.add(createMove(myPosition, currRow+1, currCol, null));
-
                 //capture
                 if(board.currBoard[currRow + 1][currCol] != null && board.currBoard[currRow + 1][currCol].getTeamColor() != color) {
                     break;
@@ -369,14 +347,11 @@ public class ChessPiece {
             }
             currRow++;
         }
-
         //go right
         currRow = startRow;
-
         while(currCol < 8) {
             if(isValidMove(currRow, currCol + 1, board)) {
                 possibleMoves.add(createMove(myPosition, currRow, currCol + 1, null));
-
                 //capture
                 if(board.currBoard[currRow][currCol + 1] != null && board.currBoard[currRow][currCol + 1].getTeamColor() != color) {
                     break;
@@ -387,17 +362,15 @@ public class ChessPiece {
             }
             currCol++;
         }
-
         //go left
         //go right
         currCol = startCol;
-
         while(currCol > 1) {
             if(isValidMove(currRow, currCol - 1, board)) {
                 possibleMoves.add(createMove(myPosition, currRow, currCol - 1, null));
-
                 //capture
-                if(board.currBoard[currRow][currCol - 1] != null && board.currBoard[currRow][currCol - 1].getTeamColor() != color) {
+                if(board.currBoard[currRow][currCol - 1] != null
+                        && board.currBoard[currRow][currCol - 1].getTeamColor() != color) {
                     break;
                 }
             }
@@ -406,37 +379,32 @@ public class ChessPiece {
             }
             currCol--;
         }
-
         return possibleMoves;
     }
 
     //Queen (uses the moves from rook and bishop)---------------------------------------------------------------------
     public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-
         possibleMoves.addAll(rookMoves(board, myPosition));
         possibleMoves.addAll(bishopMoves(board, myPosition));
-
         return possibleMoves;
     }
-
     //Pawn (special capture rules) ---------------------------------------------------------------------
     public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
         int startRow = myPosition.getRow();
         int startCol = myPosition.getColumn();
-
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-
         //initial two space move-----------------------------------
         //BLACK
-        if(color == ChessGame.TeamColor.BLACK && startRow == 7 && isValidPawnMove(startRow-1, startCol, board) && isValidPawnMove(startRow-2, startCol, board)) {
+        if(color == ChessGame.TeamColor.BLACK && startRow == 7 && isValidPawnMove(startRow-1, startCol, board)
+                && isValidPawnMove(startRow-2, startCol, board)) {
             possibleMoves.add(createMove(myPosition, startRow-2, startCol, null));
         }
         //WHITE
-        if(color == ChessGame.TeamColor.WHITE && startRow == 2 && isValidPawnMove(startRow+1, startCol, board) && isValidPawnMove(startRow+2, startCol, board)) {
+        if(color == ChessGame.TeamColor.WHITE && startRow == 2 && isValidPawnMove(startRow+1, startCol, board)
+                && isValidPawnMove(startRow+2, startCol, board)) {
             possibleMoves.add(createMove(myPosition, startRow+2, startCol, null));
         }
-
         //regular move (and promotion)------------------------
         //BLACK
         if(color == ChessGame.TeamColor.BLACK && isValidPawnMove(startRow-1, startCol, board)) {
@@ -462,7 +430,6 @@ public class ChessPiece {
                 possibleMoves.add(createMove(myPosition, startRow + 1, startCol, PieceType.ROOK));
             }
         }
-
         //capture (and promotion)----------------------------------------
         //BLACK
         //left
@@ -489,7 +456,6 @@ public class ChessPiece {
                 possibleMoves.add(createMove(myPosition, startRow - 1, startCol+1, PieceType.ROOK));
             }
         }
-
         //WHITE
         //left
         if(color == ChessGame.TeamColor.WHITE && isValidPawnCapture(startRow+1, startCol-1, board)) {
@@ -515,10 +481,8 @@ public class ChessPiece {
                 possibleMoves.add(createMove(myPosition, startRow + 1, startCol+1, PieceType.ROOK));
             }
         }
-
         return possibleMoves;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -529,7 +493,6 @@ public class ChessPiece {
         }
         return color == that.color && pType == that.pType;
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(color, pType);
