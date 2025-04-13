@@ -29,20 +29,10 @@ public class MySqlGameDataAccess implements GameDataAccess {
 
     @Override
     public int insertGame(GameData game) throws DataAccessException {
-        // Use default values if any required field is null
-        String defaultWhiteUsername = "default_white";
-        String defaultBlackUsername = "default_black";
-        String defaultGameName = "default_game";
-
-        String playerWhite = game.whiteUsername() != null ? game.whiteUsername() : defaultWhiteUsername;
-        String playerBlack = game.blackUsername() != null ? game.blackUsername() : defaultBlackUsername;
-        String gameName = game.gameName() != null ? game.gameName() : defaultGameName;
 
         var statement = "INSERT INTO game (player_white, player_black, game_name, game_state) VALUES (?, ?, ?, ?)";
         var gameState = new Gson().toJson(game); // Serialize game state
-
-        // Execute the statement with potentially substituted default values
-        return executeUpdate(statement, playerWhite, playerBlack, gameName, gameState);
+        return executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), gameState);
     }
 
     @Override
@@ -108,8 +98,8 @@ public class MySqlGameDataAccess implements GameDataAccess {
             """
     CREATE TABLE IF NOT EXISTS game (
       id INT AUTO_INCREMENT PRIMARY KEY,
-      player_white VARCHAR(256) NOT NULL,
-      player_black VARCHAR(256) NOT NULL,
+      player_white VARCHAR(256) DEFAULT NULL,
+      player_black VARCHAR(256) DEFAULT NULL,
       game_name VARCHAR(256) NOT NULL,
       game_state TEXT DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
