@@ -1,19 +1,11 @@
 package dataaccess;
 
 import com.google.gson.Gson;
-//import exception.ResponseException;
 import model.GameData;
-import model.UserData;
-import model.AuthData;
-
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.*;
 import java.sql.*;
-
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
 
 
 public class MySqlGameDataAccess implements GameDataAccess {
@@ -58,8 +50,8 @@ public class MySqlGameDataAccess implements GameDataAccess {
         String whiteUsername = rs.getString("player_white");
         String blackUsername = rs.getString("player_black");
         String gameName = rs.getString("game_name");
-        String gameStateJson = rs.getString("game_state");
-        GameData game = new Gson().fromJson(gameStateJson, GameData.class); // Deserialize game state
+        //String gameStateJson = rs.getString("game_state");
+        //GameData game = new Gson().fromJson(gameStateJson, GameData.class); // Deserialize game state
         return new GameData(id, whiteUsername, blackUsername, gameName);
     }
 
@@ -90,7 +82,7 @@ public class MySqlGameDataAccess implements GameDataAccess {
 
     @Override
     public void clearAllGames() throws DataAccessException {
-        var statement = "TRUNCATE game";
+        String statement = "TRUNCATE game";
         executeUpdate(statement);
     }
 
@@ -123,9 +115,13 @@ public class MySqlGameDataAccess implements GameDataAccess {
             try (var ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else if (param == null) ps.setNull(i + 1, Types.NULL);
+                    switch (param) {
+                        case String p -> ps.setString(i + 1, p);
+                        case Integer p -> ps.setInt(i + 1, p);
+                        case null -> ps.setNull(i + 1, Types.NULL);
+                        default -> {
+                        }
+                    }
                 }
                 ps.executeUpdate();
                 var rs = ps.getGeneratedKeys();
