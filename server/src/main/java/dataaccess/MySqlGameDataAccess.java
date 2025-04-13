@@ -107,7 +107,7 @@ public class MySqlGameDataAccess implements GameDataAccess {
     };
 
     private void configureDatabase() throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
+        try (Connection conn = DatabaseManager.getConnection()) {
             for (var statement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();

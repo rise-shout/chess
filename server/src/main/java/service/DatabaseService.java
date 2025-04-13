@@ -8,18 +8,18 @@ import java.util.Map;
 
 public class DatabaseService {
     private final UserDAO userDAO;
-    private final GameDataAccess gameDAO;
+    private final GameDataAccess gameDAOVar;
     private final AuthTokenDAO authTokenDAO;
 
     public DatabaseService() {
         this.userDAO = new UserDAO();
-        this.gameDAO = new GameDAO();
+        this.gameDAOVar = new GameDAO();
         this.authTokenDAO = new AuthTokenDAO();
     }
 
     public DatabaseService(UserDAO userDAO, GameDataAccess gameDAO, AuthTokenDAO authTokenDAO) {
         this.userDAO = userDAO;
-        this.gameDAO = gameDAO;
+        this.gameDAOVar = gameDAO;
         this.authTokenDAO =authTokenDAO;
     }
 
@@ -27,7 +27,7 @@ public class DatabaseService {
 
         // Clear users and games
         userDAO.clearAllUsers();
-        gameDAO.clearAllGames();
+        gameDAOVar.clearAllGames();
 
         // Instead of clearing all tokens, clear only those that belong to deleted users
         // Get all auth tokens

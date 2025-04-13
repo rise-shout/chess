@@ -17,10 +17,13 @@ public class Server {
      */
 
     public int run(int desiredPort) {
+        System.out.println("Setting Spark port...");
         Spark.port(desiredPort);
 
+        System.out.println("Setting static files location...");
         Spark.staticFiles.location("web");
 
+        System.out.println("Initializing DAOs...");
         // Determine which data access implementation to use
         GameDataAccess gameDAO;
         //UserDAO userDAO;
@@ -52,6 +55,7 @@ public class Server {
 
         DatabaseController dbController = new DatabaseController(new DatabaseService(userDAO, gameDAO, authTokenDAO));
 
+        System.out.println("Registering routes...");
         // Register routes
         Spark.delete("/db", dbController.clearDatabase);
         Spark.post("/user", userController.register);
@@ -61,12 +65,22 @@ public class Server {
         Spark.post("/game", gameController.createGame);
         Spark.put("/game", gameController.joinGame);
 
+        System.out.println("Starting Spark...");
         Spark.init();
         Spark.awaitInitialization();
+        System.out.println("Spark started on port: " + Spark.port());
         return Spark.port();
     }
 
     public void stop() {
         Spark.stop();
+        System.out.println("SERVER HAS BEEN STOPPED, NOW WAITING");
+
+        Spark.awaitStop(); // Wait for Spark to stop completely
+        try {
+            Thread.sleep(100); // Add a small delay to ensure cleanup
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

@@ -7,10 +7,10 @@ import spark.Response;
 import spark.Route;
 
 public class DatabaseController {
-    private DatabaseService databaseService = null;
+    private DatabaseService databaseService;
 
     public DatabaseController(DatabaseService databaseService) {
-        this.databaseService = new DatabaseService();
+        this.databaseService = databaseService;
     }
 
     public Route clearDatabase = (Request req, Response res) -> {
