@@ -15,7 +15,8 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 
-public class MySqlDataAccess implements DataAccess {
+public class MySqlDataAccess implements GameDataAccess {
+
 
     @Override
     public int insertGame(GameData game) throws DataAccessException {

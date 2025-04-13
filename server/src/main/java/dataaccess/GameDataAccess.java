@@ -2,13 +2,10 @@ package dataaccess;
 
 //import exception.ResponseException;
 import model.GameData;
-import model.UserData;
-import model.AuthData;
 
-import java.util.Collection;
 import java.util.List;
 
-public interface DataAccess {
+public interface GameDataAccess {
 
     int insertGame(GameData game) throws DataAccessException;
     GameData getGameById(int gameId) throws DataAccessException;
