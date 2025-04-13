@@ -3,13 +3,14 @@ package service;
 import dataaccess.AuthTokenDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
+import dataaccess.GameDataAccess;
 import model.AuthData;
 import model.GameData;
 
 import java.util.List;
 
 public class GameService {
-    private final GameDAO gameDAO;
+    private final GameDataAccess gameDAO;
     private final AuthTokenDAO authTokenDAO;
 
     public GameService() {
@@ -17,7 +18,7 @@ public class GameService {
         this.authTokenDAO = AuthTokenDAO.getInstance();
     }
 
-    public GameService(GameDAO gameDAO, AuthTokenDAO authTokenDAO) {
+    public GameService(GameDataAccess gameDAO, AuthTokenDAO authTokenDAO) {
         this.gameDAO = gameDAO;
         this.authTokenDAO = authTokenDAO;
     }

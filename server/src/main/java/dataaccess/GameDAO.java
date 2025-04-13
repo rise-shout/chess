@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class GameDAO {
+public class GameDAO implements GameDataAccess {
     // In-memory database simulation
     private static List<GameData> gameList;
     private static AtomicInteger gameIdGenerator;

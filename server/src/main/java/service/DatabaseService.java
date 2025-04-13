@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.AuthTokenDAO;
-import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import model.AuthData;
 
 import java.util.HashMap;
@@ -11,7 +8,7 @@ import java.util.Map;
 
 public class DatabaseService {
     private final UserDAO userDAO;
-    private final GameDAO gameDAO;
+    private final GameDataAccess gameDAO;
     private final AuthTokenDAO authTokenDAO;
 
     public DatabaseService() {
@@ -20,7 +17,7 @@ public class DatabaseService {
         this.authTokenDAO = new AuthTokenDAO();
     }
 
-    public DatabaseService(UserDAO userDAO, GameDAO gameDAO, AuthTokenDAO authTokenDAO) {
+    public DatabaseService(UserDAO userDAO, GameDataAccess gameDAO, AuthTokenDAO authTokenDAO) {
         this.userDAO = userDAO;
         this.gameDAO = gameDAO;
         this.authTokenDAO =authTokenDAO;
