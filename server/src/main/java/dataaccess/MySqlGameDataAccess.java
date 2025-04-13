@@ -25,7 +25,8 @@ public class MySqlGameDataAccess implements GameDataAccess {
     public int insertGame(GameData game) throws DataAccessException {
         var statement = "INSERT INTO game (player_white, player_black, game_name, game_state) VALUES (?, ?, ?, ?)";
         var gameState = new Gson().toJson(game); // Serialize game state
-        return executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), gameState);
+        return executeUpdate(statement, game.whiteUsername(),
+                game.blackUsername(), game.gameName(), gameState);
     }
 
     @Override
@@ -57,9 +58,7 @@ public class MySqlGameDataAccess implements GameDataAccess {
     @Override
     public void updateGame(GameData updatedGame) throws DataAccessException {
         if(gameExists(updatedGame.gameName())) {
-            var statement = "UPDATE game SET player_white=?, player_black=?, game_name=?, game_state=? WHERE id=?";
-            var gameState = new Gson().toJson(updatedGame);
-            executeUpdate(statement, updatedGame.whiteUsername(), updatedGame.blackUsername(), updatedGame.gameName(), gameState, updatedGame.gameID());
+            doUpdate(updatedGame);
         }
         else {
             throw new DataAccessException("Game not found");
@@ -68,14 +67,20 @@ public class MySqlGameDataAccess implements GameDataAccess {
 
     public void updateGame(GameData updatedGame, GameData oldGame) throws DataAccessException {
         if(gameExists(oldGame.gameName())) {
-            var statement = "UPDATE game SET player_white=?, player_black=?, game_name=?, game_state=? WHERE id=?";
-            var gameState = new Gson().toJson(updatedGame);
-            executeUpdate(statement, updatedGame.whiteUsername(), updatedGame.blackUsername(), updatedGame.gameName(), gameState, updatedGame.gameID());
+            doUpdate(updatedGame);
         }
         else {
             throw new DataAccessException("Game not found");
         }
     }
+
+    public void doUpdate(GameData updatedGame) throws DataAccessException {
+        var statement = "UPDATE game SET player_white=?, player_black=?, game_name=?, game_state=? WHERE id=?";
+        var gameState = new Gson().toJson(updatedGame);
+        executeUpdate(statement, updatedGame.whiteUsername(), updatedGame.blackUsername(),
+                updatedGame.gameName(), gameState, updatedGame.gameID());
+    }
+
 
     @Override
     public List<GameData> getAllGames() throws DataAccessException {

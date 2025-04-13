@@ -68,7 +68,8 @@ public class GameController {
             JoinGameRequest joinGameRequest = gson.fromJson(req.body(), JoinGameRequest.class);
 
             // Validate the request
-            if (joinGameRequest == null ||  joinGameRequest.playerColor() == null || joinGameRequest.playerColor().isEmpty() || joinGameRequest.gameID() <= 0) {
+            if (joinGameRequest == null ||  joinGameRequest.playerColor() == null
+                    || joinGameRequest.playerColor().isEmpty() || joinGameRequest.gameID() <= 0) {
                 res.status(400);
                 return gson.toJson(new ErrorResult("Error: bad request"));
             }
