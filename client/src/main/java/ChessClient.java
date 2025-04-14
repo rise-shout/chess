@@ -126,6 +126,7 @@ public class ChessClient {
         String color;
         boolean resumeGame = false;
 
+        assert allGames != null;
         if(allGames.get(gameNumber-1).blackUsername().equals(loggedInUsername)) {
             System.out.println("You have joined this game previously as the black player. Resuming game...");
             color = "BLACK";
@@ -152,7 +153,7 @@ public class ChessClient {
 
             // After joining the game, display the board
             //NOTE: THIS IS A GENERIC BOARD, NOT THE ACTUAL GAME BOARD
-            ChessboardRenderer.drawBoard(new ChessBoard(), color);  // Display the board from the correct perspective
+            ChessboardRenderer.drawBoard(new ChessGame(), color);  // Display the board from the correct perspective
 
         } catch (Exception e) {
             System.out.println("Error joining the game: " + e.getMessage());
