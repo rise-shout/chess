@@ -14,11 +14,9 @@ import java.util.*;
 
 public class ServerFacade {
     public final String serverUrl;
-    private final Gson gson;
 
     public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
-        this.gson = new Gson();
     }
 
     // Implement the register method similar to login
@@ -39,8 +37,8 @@ public class ServerFacade {
     public List<GameData> listGames(String authToken) throws Exception {
         String path = "/game";
 
-        record listGamesResponse(List<GameData> games) {}
-            listGamesResponse response = this.makeRequest("GET", path, null, listGamesResponse.class, authToken);//FIXME
+        record ListGamesResponse(List<GameData> games) {}
+            ListGamesResponse response = this.makeRequest("GET", path, null, ListGamesResponse.class, authToken);
             return response.games;
 
     }
@@ -142,7 +140,7 @@ public class ServerFacade {
         }
     }
 
-    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException,Exception {
+    private void throwIfNotSuccessful(HttpURLConnection http) throws Exception {
         int status = http.getResponseCode();
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {

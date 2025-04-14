@@ -13,11 +13,6 @@ public class UserService {
     private final UserDataAccess userDAO;
     private final AuthDataAccess authTokenDAO;
 
-    public UserService() {
-        this.userDAO = new UserDAO();
-        this.authTokenDAO = AuthTokenDAO.getInstance();
-    }
-
     public UserService(UserDataAccess userDAO, AuthDataAccess authTokenDAO) {
         this.userDAO = userDAO;
         this.authTokenDAO = authTokenDAO;

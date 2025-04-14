@@ -10,11 +10,6 @@ public class GameService {
     private final GameDataAccess gameDAO;
     private final AuthDataAccess authTokenDAO;
 
-    public GameService() {
-        this.gameDAO = new GameDAO();
-        this.authTokenDAO = AuthTokenDAO.getInstance();
-    }
-
     public GameService(GameDataAccess gameDAO, AuthDataAccess authTokenDAO) {
         this.gameDAO = gameDAO;
         this.authTokenDAO = authTokenDAO;

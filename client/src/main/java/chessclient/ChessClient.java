@@ -14,32 +14,26 @@ public class ChessClient {
     public static String loggedInUsername = null;
     public static String userAuthToken = null;
 
-    public ChessClient(){
-        ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
-    }
-
-    public static void main(String[] args) throws Exception {
+        public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         boolean loggedIn = false;
         boolean inGame = false;
-
         System.out.println("Welcome to the Chess Client!");
         if(serverFacade == null) {
             serverFacade = new ServerFacade("http://localhost:8080");
         }
-
         while (running) {
             if(!loggedIn) {
-                System.out.println("\n~You are currently logged out.~\nOptions:");
-                System.out.println("\t1. Help");
-                System.out.println("\t2. Register");
-                System.out.println("\t3. Login");
-                System.out.println("\t4. Quit");
-                System.out.print("What would you like to do: ");
-
+                System.out.println("""
+                        ~You are currently logged out.~
+                        Options:
+                        \t1. Help
+                        \t2. Register
+                        \t3. Login
+                        \t4. Quit
+                        What would you like to do:\s""");
                 String input = scanner.nextLine().trim();
-
                 switch (input) {
                     case "1":
                         System.out.println("\nHelp: Available commands are:");
@@ -61,7 +55,6 @@ public class ChessClient {
                             userAuthToken = null;
                             System.out.println("Registration failed.");
                         }
-
                         break;
                     case "3":
                         try {
@@ -87,24 +80,23 @@ public class ChessClient {
             else if(!inGame){
                 // Post-login menu
                 System.out.println("\n~You are currently logged in as " + loggedInUsername + ".~\nOptions:");
-                System.out.println("\t1. Help");
-                System.out.println("\t2. Logout");
-                System.out.println("\t3. List existing games");
-                System.out.println("\t4. Create a new game");
-                System.out.println("\t5. Play an existing game");
-                System.out.println("\t6. Observe a game");
-                System.out.print("What would you like to do: ");
-
+                System.out.println("""
+                        \t1. Help
+                        \t2. Logout
+                        \t3. List existing games
+                        \t4. Create a new game
+                        \t5. Play an existing game
+                        \t6. Observe a game
+                        What would you like to do:\s""");
                 String input = scanner.nextLine().trim();
-
                 switch (input) {
                     case "1":
-                        System.out.println("\nHelp: Available commands are:");
-                        System.out.println("\t- Logout: Log out of your account.");
-                        System.out.println("\t- List existing games: List all games that have been created in the server.");
-                        System.out.println("\t- Create a new game: Adds a new, blank game to the list of existing games.");
-                        System.out.println("\t- Play an existing game: Pick an existing game to join as a player and choose your color.");
-                        System.out.println("\t- Observe a game: Pick an existing game to watch, but not join as a player.");
+                        System.out.println("\nHelp: Available commands are:\n\t- Logout: Log out of your account.");
+                        System.out.println("""
+                                \t- List existing games: List all games that have been created in the server.
+                                \t- Create a new game: Adds a new, blank game to the list of existing games.
+                                \t- Play an existing game: Pick an existing game to join as a player and choose your color.
+                                \t- Observe a game: Pick an existing game to watch, but not join as a player.""");
                         break;
                     case "2":
                         System.out.println("\nLogging out...");
@@ -139,7 +131,6 @@ public class ChessClient {
                 }
             }
         }
-
         scanner.close();
     }
 
@@ -195,10 +186,7 @@ public class ChessClient {
 
         try {
 
-            ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
-
             System.out.println("Enjoy the game!");
-
 
             // After joining the game, display the board
             //NOTE: THIS IS A GENERIC BOARD, NOT THE ACTUAL GAME BOARD

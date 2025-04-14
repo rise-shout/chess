@@ -21,9 +21,6 @@ public class ChessboardRenderer {
 
         drawBasicBoard(out, playerColor, currGame.getBoard());
 
-
-
-
     }
 
     private static void drawBasicBoard(PrintStream out, String viewPoint, ChessBoard board) {
@@ -42,7 +39,6 @@ public class ChessboardRenderer {
                     setBlack(out);
                     out.print("  ");
                 }
-
                 //letters on top and bottom
                 if(boardRow == 0 || boardRow == BOARD_SIZE_IN_SQUARES+1 || boardCol == 0 || boardCol > BOARD_SIZE_IN_SQUARES) {
                     setBlack(out);
@@ -76,22 +72,12 @@ public class ChessboardRenderer {
                         if ((boardCol == 0 || boardCol == 9) && boardRow != 0 && boardRow != 9) {
                             out.print(boardRow);
                             out.print(" ");
-
                         }
-
                     }
-
-
-
-
                 }
-
-
                 else {
-
                     //alternate colors
                     greenSquare = !greenSquare;
-
                     if (greenSquare) {
                         setGreen(out);
                     } else {
@@ -120,14 +106,12 @@ public class ChessboardRenderer {
                         out.print("   ");
                     }
                 }
-
                 if(boardRow ==  9 && boardCol > 7) {
                     out.print(" ");
                 }
                 if(boardRow ==  0 && boardCol > 7) {
                     out.print(" ");
                 }
-
             }
             oppositeNum--;
             out.print(EscapeSequences.RESET_BG_COLOR);

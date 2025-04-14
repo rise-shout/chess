@@ -36,11 +36,6 @@ public class AuthTokenDAO implements AuthDataAccess{
         }
     }
 
-    @Override
-    public String getAuthToken(String username) throws DataAccessException {
-        return null;
-    }
-
     public void deleteAuth(String authToken) throws DataAccessException {
         try {
             authTokenMap.remove(authToken);
@@ -49,13 +44,6 @@ public class AuthTokenDAO implements AuthDataAccess{
         }
     }
 
-    public Map<String, AuthData> getAllAuthTokens() {
-        return new HashMap<>(authTokenMap);
-    }
-
-    public void setAuthTokens(Map<String, AuthData> newTokens) {
-        authTokenMap = new HashMap<>(newTokens);
-    }
 
     @Override
     public void clearAllTokens() throws DataAccessException {
