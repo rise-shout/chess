@@ -1,17 +1,14 @@
 package chessclient;
 
 import chess.ChessGame;
-import dataaccess.MySqlGameDataAccess;
+
 import model.*;
-import service.LoginRequest;
-import service.LoginResult;
-import service.RegisterRequest;
-import service.RegisterResult;
 
 
 import java.util.Scanner;
 import java.util.*;
 public class ChessClient {
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
@@ -41,18 +38,18 @@ public class ChessClient {
                         System.out.println("\t- Quit: Exit the program.");
                         break;
                     case "2":
-                        RegisterResult registerResult = registerUser(scanner);
+                        UserData newUser = registerUser(scanner);
                         loggedIn = true;
-                        assert registerResult != null;
-                        loggedInUsername = registerResult.username();
-                        userAuthToken = registerResult.authToken();
+                        assert newUser != null;
+                        loggedInUsername = newUser.username();
+                        //userAuthToken = newUser.authToken();
                         break;
                     case "3":
-                        LoginResult loginResult = loginUser(scanner);
+                        UserData loginResult = loginUser(scanner);
                         loggedIn = true;
                         assert loginResult != null;
                         loggedInUsername = loginResult.username();
-                        userAuthToken = loginResult.authToken();
+                        //userAuthToken = loginResult.authToken();
                         break;
                     case "4":
                         System.out.println("\nGoodbye!");
@@ -227,16 +224,16 @@ public class ChessClient {
         return null;
     }
 
-    private static LoginResult loginUser(Scanner scanner) {
+    private static UserData loginUser(Scanner scanner) {
         System.out.print("\nEnter username: ");
         String username = scanner.nextLine();
         System.out.print("Enter password: ");
         String password = scanner.nextLine();
 
         try {
-            LoginRequest loginRequest = new LoginRequest(username, password);
+            UserData user = new UserData(username, password, null);
             ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
-            LoginResult result = serverFacade.login(loginRequest);
+            UserData result = serverFacade.login(user);
             System.out.println("Login successful! Welcome, " + result.username());
             return result;
         } catch (Exception e) {
@@ -246,7 +243,7 @@ public class ChessClient {
     }
 
     // Method to handle user registration
-    private static RegisterResult registerUser(Scanner scanner) {
+    private static UserData registerUser(Scanner scanner) {
         System.out.println("\nRegistering a new user:");
 
         System.out.print("Enter username: ");
@@ -259,13 +256,13 @@ public class ChessClient {
         String email = scanner.nextLine();
 
         // Create RegisterRequest object
-        RegisterRequest registerRequest = new RegisterRequest(username, password, email);
+        UserData user = new UserData(username, password, email);
 
         try {
             // Initialize the chessclient.ServerFacade
             ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
             // Call the register method on the serverFacade
-            RegisterResult result = serverFacade.register(registerRequest);
+            UserData result = serverFacade.register(user);
 
             // Check if registration was successful
             if (result != null) {

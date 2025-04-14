@@ -13,7 +13,10 @@ public class Main {
 
 
         int port = server.run(8080);
-        //System.out.println("Server is running on port: " + port);
+        System.out.println("Server is running on port: " + port);
+
+        String serverHost = System.getenv("SERVER_HOST");
+        System.out.println("Server Host is: " + serverHost);
 
         //System.out.println("Available routes:");
         //Spark.routes().forEach(System.out::println);

@@ -2,12 +2,17 @@ package chessclient;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import com.google.gson.Gson;
 
-import model.GameData;
+import main.exception.ResponseException;
+import model.*;
 import server.GameListResult;
-import service.*;
+import service.GameRequest;
+import service.GameResponse;
+import service.JoinGameRequest;
+
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -22,96 +27,17 @@ public class ServerFacade {
     }
 
     // Implement the register method similar to login
-    public RegisterResult register(RegisterRequest request) throws Exception {
+    public UserData register(UserData userToAdd) throws Exception {
         // URL for the register endpoint
-        String endpoint = serverUrl + "/user";
-        URL url = new URL(endpoint);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        var path = "/user";
+        return this.makeRequest("POST", path, userToAdd, UserData.class);
 
-        try {
-            // Set up the connection
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
-
-            // Convert
-            String jsonRequest = gson.toJson(request);
-
-            // Write
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = jsonRequest.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-
-            // Get the response code and handle accordingly
-            int statusCode = connection.getResponseCode();
-            InputStream responseStream = (statusCode == 200) ? connection.getInputStream() : connection.getErrorStream();
-
-            // Read the response
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(responseStream, StandardCharsets.UTF_8))) {
-                StringBuilder responseBuilder = new StringBuilder();
-                String responseLine;
-                while ((responseLine = br.readLine()) != null) {
-                    responseBuilder.append(responseLine.trim());
-                }
-
-                if (statusCode == 200) {
-                    // Success: Parse and return the result
-                    return gson.fromJson(responseBuilder.toString(), RegisterResult.class);
-                } else {
-                    // Failure: Throw an exception with the error message
-                    throw new Exception("Registration failed: " + responseBuilder);
-                }
-            }
-        } finally {
-            connection.disconnect();
-        }
     }
 
-    public LoginResult login(LoginRequest request) throws Exception {
+    public UserData login(UserData userToLogin) throws Exception {
         // URL for the login endpoint
-        String endpoint = serverUrl + "/session";
-        URL url = new URL(endpoint);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        try {
-            // Set up the connection
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
-
-            // Convert
-            String jsonRequest = gson.toJson(request);
-
-            // Write
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = jsonRequest.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-
-            // Get the response code and handle accordingly
-            int statusCode = connection.getResponseCode();
-            InputStream responseStream = (statusCode == 200) ? connection.getInputStream() : connection.getErrorStream();
-
-            // Read the response
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(responseStream, StandardCharsets.UTF_8))) {
-                StringBuilder responseBuilder = new StringBuilder();
-                String responseLine;
-                while ((responseLine = br.readLine()) != null) {
-                    responseBuilder.append(responseLine.trim());
-                }
-
-                if (statusCode == 200) {
-                    // Success: Parse and return the result
-                    return gson.fromJson(responseBuilder.toString(), LoginResult.class);
-                } else {
-                    // Failure: Throw an exception with the error message
-                    throw new Exception("Login failed: " + responseBuilder);
-                }
-            }
-        } finally {
-            connection.disconnect();
-        }
+        String path = "/session";
+        return this.makeRequest("POST", path, userToLogin, UserData.class);
     }
 
     public List<GameData> listGames(String authToken) throws Exception {
@@ -243,6 +169,65 @@ public class ServerFacade {
         } finally {
             connection.disconnect();
         }
+    }
+
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+        try {
+            URL url = (new URI(serverUrl + path)).toURL();
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            http.setRequestMethod(method);
+            http.setDoOutput(true);
+
+            writeBody(request, http);
+            http.connect();
+            throwIfNotSuccessful(http);
+            return readBody(http, responseClass);
+        } catch (ResponseException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
+        if (request != null) {
+            http.addRequestProperty("Content-Type", "application/json");
+            String reqData = new Gson().toJson(request);
+            try (OutputStream reqBody = http.getOutputStream()) {
+                reqBody.write(reqData.getBytes());
+            }
+        }
+    }
+
+    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
+        var status = http.getResponseCode();
+        if (!isSuccessful(status)) {
+            try (InputStream respErr = http.getErrorStream()) {
+                if (respErr != null) {
+                    throw ResponseException.fromJson(respErr);
+                }
+            }
+
+            throw new ResponseException(status, "other failure: " + status);
+        }
+    }
+
+    private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
+        T response = null;
+        if (http.getContentLength() < 0) {
+            try (InputStream respBody = http.getInputStream()) {
+                InputStreamReader reader = new InputStreamReader(respBody);
+                if (responseClass != null) {
+                    response = new Gson().fromJson(reader, responseClass);
+                }
+            }
+        }
+        return response;
+    }
+
+
+    private boolean isSuccessful(int status) {
+        return status / 100 == 2;
     }
 }
 
