@@ -102,9 +102,21 @@ public class ChessboardRenderer {
                     //set up the chess pieces
 
                     if (board.currBoard[boardRow][boardCol] != null) {
-                        out.print(" ");
-                        out.print(getChar(board.currBoard[boardRow][boardCol]));
-                        out.print(" ");
+                        if (board.currBoard[boardRow][boardCol].getTeamColor() == ChessGame.TeamColor.WHITE) {
+                            setTextWhite(out);
+                        } else {
+                            setTextBlack(out);
+                        }
+                        if(viewPoint.equals("WHITE")) {
+                            out.print(" ");
+                            out.print(getChar(board.currBoard[boardRow][boardCol]));
+                            out.print(" ");
+                        }
+                        else {
+                            out.print(" ");
+                            out.print(getChar(board.currBoard[9-boardRow][9-boardCol]));
+                            out.print(" ");
+                        }
                     } else {
                         out.print("   ");
                     }
@@ -126,17 +138,23 @@ public class ChessboardRenderer {
 
     private static void setLightGrey(PrintStream out) {
         out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
-        out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
     }
 
     private static void setGreen(PrintStream out) {
         out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
+    }
+
+    private static void setTextWhite(PrintStream out) {
         out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+    }
+
+    private static void setTextBlack(PrintStream out) {
+        out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
     }
 
     private static void setBlack(PrintStream out) {
         out.print(EscapeSequences.SET_BG_COLOR_BLACK);
-        out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
     }
 
     private static String getChar(ChessPiece piece) {
@@ -146,19 +164,19 @@ public class ChessboardRenderer {
             return "K";
         }
         if(pType == ChessPiece.PieceType.BISHOP) {
-            return "b";
+            return "B";
         }
         if(pType == ChessPiece.PieceType.KNIGHT) {
-            return "k";
+            return "N";
         }
         if(pType == ChessPiece.PieceType.ROOK) {
-            return "r";
+            return "R";
         }
         if(pType == ChessPiece.PieceType.QUEEN) {
             return "Q";
         }
         if(pType == ChessPiece.PieceType.PAWN) {
-            return "p";
+            return "P";
         }
 
         return "X";
