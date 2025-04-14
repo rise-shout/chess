@@ -1,18 +1,21 @@
 
 
+import model.AuthData;
+import model.GameData;
 import service.LoginRequest;
 import service.LoginResult;
 import service.RegisterRequest;
 import service.RegisterResult;
 
 import java.util.Scanner;
-
+import java.util.*;
 public class ChessClient {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         boolean loggedIn = false;
         String loggedInUsername = null;
+        String userAuthToken = null;
 
         System.out.println("Welcome to the Chess Client!");
 
@@ -35,13 +38,18 @@ public class ChessClient {
                         System.out.println("\t- Quit: Exit the program.");
                         break;
                     case "2":
-                        registerUser(scanner);
+                        RegisterResult registerResult = registerUser(scanner);
+                        loggedIn = true;
+                        assert registerResult != null;
+                        loggedInUsername = registerResult.username();
+                        userAuthToken = registerResult.authToken();
                         break;
                     case "3":
                         LoginResult loginResult = loginUser(scanner);
                         loggedIn = true;
                         assert loginResult != null;
                         loggedInUsername = loginResult.username();
+                        userAuthToken = loginResult.authToken();
                         break;
                     case "4":
                         System.out.println("\nGoodbye!");
@@ -79,7 +87,7 @@ public class ChessClient {
                         loggedInUsername = null;
                         break;
                     case "3":
-                        System.out.println("\nListing all games... (Functionality not implemented yet).");
+                        listGames(userAuthToken);
                         break;
                     case "4":
                         System.out.println("\nCreating a new game... (Functionality not implemented yet).");
@@ -97,6 +105,25 @@ public class ChessClient {
         }
 
         scanner.close();
+    }
+
+    private static void listGames(String authToken) {
+        try {
+            ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+            List<GameData> games = serverFacade.listGames(authToken); // Pass the auth token
+
+            if (games.isEmpty()) {
+                System.out.println("\nNo games available on the server.");
+            } else {
+                System.out.println("\nExisting games:");
+                for (int i = 0; i < games.size(); i++) {
+                    GameData game = games.get(i);
+                    System.out.println((i + 1) + ". Game ID: " + game.gameID()+ " Game Name: " + game.gameName());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error retrieving games: " + e.getMessage());
+        }
     }
 
     private static LoginResult loginUser(Scanner scanner) {
@@ -118,7 +145,7 @@ public class ChessClient {
     }
 
     // Method to handle user registration
-    private static void registerUser(Scanner scanner) {
+    private static RegisterResult registerUser(Scanner scanner) {
         System.out.println("\nRegistering a new user:");
 
         System.out.print("Enter username: ");
@@ -142,11 +169,14 @@ public class ChessClient {
             // Check if registration was successful
             if (result != null) {
                 System.out.println("Registration successful! Welcome, " + result.username());
+                return result;
             } else {
                 System.out.println("Registration failed. Please try again.");
+                return null;
             }
         } catch (Exception e) {
             System.out.println("Registration failed.");
+            return null;
         }
     }
 }

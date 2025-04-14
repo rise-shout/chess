@@ -3,11 +3,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import com.google.gson.Gson;
 
+import model.GameData;
+import server.GameListResult;
 import server.UserController;
 import service.RegisterRequest;
 import service.LoginRequest;
 import service.LoginResult;
 import service.RegisterResult;
+
+import java.util.*;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -110,6 +114,44 @@ public class ServerFacade {
             connection.disconnect();
         }
     }
+
+    public List<GameData> listGames(String authToken) throws Exception {
+        String endpoint = serverUrl + "/game";
+        URL url = new URL(endpoint);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        try {
+            // Set up the connection
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Authorization", authToken); // Add the auth token
+            connection.setDoInput(true);
+
+            int statusCode = connection.getResponseCode();
+
+            InputStream responseStream = (statusCode == 200) ? connection.getInputStream() : connection.getErrorStream();
+
+            // Read the response
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(responseStream, "utf-8"))) {
+                StringBuilder responseBuilder = new StringBuilder();
+                String responseLine;
+                while ((responseLine = br.readLine()) != null) {
+                    responseBuilder.append(responseLine.trim());
+                }
+
+                if (statusCode == 200) {
+                    // Deserialize the JSON response into a GameListResult
+                    GameListResult gameListResult = gson.fromJson(responseBuilder.toString(), GameListResult.class);
+                    return gameListResult.games(); // Extract the list of games
+                } else {
+                    throw new Exception("Failed to retrieve games: " + responseBuilder.toString());
+                }
+            }
+        } finally {
+            connection.disconnect();
+        }
+    }
+
 }
 
 
