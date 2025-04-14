@@ -104,7 +104,7 @@ public class ChessClient {
                         }
                         break;
                     case "6":
-                        System.out.println("\nPick a game to observe... (Functionality not implemented yet).");
+                        watchGame(scanner, userAuthToken, loggedInUsername);
                         break;
                     default:
                         System.out.println("\nInvalid choice.");
@@ -156,7 +156,31 @@ public class ChessClient {
             ChessboardRenderer.drawBoard(new ChessGame(), color);  // Display the board from the correct perspective
 
         } catch (Exception e) {
-            System.out.println("Error joining the game: " + e.getMessage());
+            System.out.println("Unable to join game.");
+        }
+    }
+
+    private static void watchGame(Scanner scanner, String userAuthToken, String loggedInUsername) {
+        // First, list the games
+        List<GameData> allGames = listGames(userAuthToken);
+
+        // Get the game number and color from the user
+        System.out.print("\nEnter the number of the game you want to watch: ");
+        int gameNumber = Integer.parseInt(scanner.nextLine().trim());
+
+        try {
+
+            ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+
+            System.out.println("Enjoy the game!");
+
+
+            // After joining the game, display the board
+            //NOTE: THIS IS A GENERIC BOARD, NOT THE ACTUAL GAME BOARD
+            ChessboardRenderer.drawBoard(new ChessGame(), "WHITE");  // Display the board from the correct perspective
+
+        } catch (Exception e) {
+            System.out.println("Unable to watch selected game.");
         }
     }
 
@@ -169,7 +193,7 @@ public class ChessClient {
             int gameId = serverFacade.createGame(userAuthToken, gameName);
             System.out.println("Game created successfully with ID: " + gameId);
         } catch (Exception e) {
-            System.out.println("Error creating game: " + e.getMessage());
+            System.out.println("Unable to create game");
         }
     }
 
@@ -199,7 +223,7 @@ public class ChessClient {
                 return games;
             }
         } catch (Exception e) {
-            System.out.println("Error retrieving games: " + e.getMessage());
+            System.out.println("Unable to list games");
         }
         return null;
     }
