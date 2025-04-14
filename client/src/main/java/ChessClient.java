@@ -131,7 +131,16 @@ public class ChessClient {
                 System.out.println("\nExisting games:");
                 for (int i = 0; i < games.size(); i++) {
                     GameData game = games.get(i);
-                    System.out.println((i + 1) + ". Game ID: " + game.gameID()+ " Game Name: " + game.gameName());
+                    System.out.println((i + 1) + ". " + " Game Name: " + game.gameName());
+                    String whiteUser = game.whiteUsername();
+                    if(whiteUser == null){
+                        whiteUser = "Not Joined (Empty)";
+                    }
+                    String blackUser = game.blackUsername();
+                    if(blackUser == null){
+                        blackUser = "Not Joined (Empty)";
+                    }
+                    System.out.println("\tWhite Player: " + whiteUser + "\tBlack Player: " + blackUser);
                 }
             }
         } catch (Exception e) {
@@ -140,9 +149,9 @@ public class ChessClient {
     }
 
     private static LoginResult loginUser(Scanner scanner) {
-        System.out.println("\nEnter username: ");
+        System.out.print("\nEnter username: ");
         String username = scanner.nextLine();
-        System.out.println("Enter password: ");
+        System.out.print("Enter password: ");
         String password = scanner.nextLine();
 
         try {
