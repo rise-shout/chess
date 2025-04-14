@@ -13,10 +13,10 @@ public class Main {
 
 
         int port = server.run(8080);
-        System.out.println("Server is running on port: " + port);
+        //System.out.println("Server is running on port: " + port);
 
-        System.out.println("Available routes:");
-        Spark.routes().forEach(System.out::println);
+        //System.out.println("Available routes:");
+        //Spark.routes().forEach(System.out::println);
 
 
     }
