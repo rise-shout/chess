@@ -1,5 +1,7 @@
 
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import service.LoginRequest;
@@ -14,6 +16,7 @@ public class ChessClient {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         boolean loggedIn = false;
+        boolean inGame = false;
         String loggedInUsername = null;
         String userAuthToken = null;
 
@@ -59,7 +62,7 @@ public class ChessClient {
                         System.out.println("\nInvalid choice.");
                 }
             }
-            else {
+            else if(!inGame){
                 // Post-login menu
                 System.out.println("\n~You are currently logged in as " + loggedInUsername + ".~\nOptions:");
                 System.out.println("\t1. Help");
@@ -93,7 +96,12 @@ public class ChessClient {
                         createNewGame(scanner, userAuthToken);
                         break;
                     case "5":
-                        playGame(scanner, userAuthToken);
+                        inGame = true;
+                        try {
+                            playGame(scanner, userAuthToken, loggedInUsername);
+                        } catch (Exception e) {
+                            inGame = false;
+                        }
                         break;
                     case "6":
                         System.out.println("\nPick a game to observe... (Functionality not implemented yet).");
@@ -107,23 +115,45 @@ public class ChessClient {
         scanner.close();
     }
 
-    private static void playGame(Scanner scanner, String userAuthToken) {
+    private static void playGame(Scanner scanner, String userAuthToken, String loggedInUsername) {
         // First, list the games
-        listGames(userAuthToken);
+        List<GameData> allGames = listGames(userAuthToken);
 
         // Get the game number and color from the user
         System.out.print("\nEnter the number of the game you want to join: ");
         int gameNumber = Integer.parseInt(scanner.nextLine().trim());
 
-        System.out.print("Enter the color you want to play (WHITE or BLACK): ");
-        String color = scanner.nextLine().trim().toUpperCase();
+        String color;
+        boolean resumeGame = false;
+
+        if(allGames.get(gameNumber-1).blackUsername().equals(loggedInUsername)) {
+            System.out.println("You have joined this game previously as the black player. Resuming game...");
+            color = "BLACK";
+            resumeGame = true;
+        }
+        else if(allGames.get(gameNumber-1).whiteUsername().equals(loggedInUsername)) {
+            System.out.println("You have joined this game previously as the white player. Resuming game...");
+            color = "WHITE";
+            resumeGame = true;
+        }
+        else {
+            System.out.print("Enter the color you want to play (WHITE or BLACK): ");
+            color = scanner.nextLine().trim().toUpperCase();
+        }
 
         try {
-            ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+            if(!resumeGame) {
+                ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
 
-            // Join the selected game with the specified color
-            serverFacade.joinGame(userAuthToken, gameNumber, color);
-            System.out.println("Successfully joined the game as " + color + ".");
+                // Join the selected game with the specified color
+                serverFacade.joinGame(userAuthToken, gameNumber, color);
+                System.out.println("Successfully joined the game as " + color + ".");
+            }
+
+            // After joining the game, display the board
+            //NOTE: THIS IS A GENERIC BOARD, NOT THE ACTUAL GAME BOARD
+            ChessboardRenderer.drawBoard(new ChessBoard(), color);  // Display the board from the correct perspective
+
         } catch (Exception e) {
             System.out.println("Error joining the game: " + e.getMessage());
         }
@@ -142,13 +172,14 @@ public class ChessClient {
         }
     }
 
-    private static void listGames(String authToken) {
+    private static List<GameData> listGames(String authToken) {
         try {
             ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
             List<GameData> games = serverFacade.listGames(authToken); // Pass the auth token
 
             if (games.isEmpty()) {
                 System.out.println("\nNo games available on the server.");
+                return null;
             } else {
                 System.out.println("\nExisting games:");
                 for (int i = 0; i < games.size(); i++) {
@@ -164,10 +195,12 @@ public class ChessClient {
                     }
                     System.out.println("\tWhite Player: " + whiteUser + "\tBlack Player: " + blackUser);
                 }
+                return games;
             }
         } catch (Exception e) {
             System.out.println("Error retrieving games: " + e.getMessage());
         }
+        return null;
     }
 
     private static LoginResult loginUser(Scanner scanner) {
