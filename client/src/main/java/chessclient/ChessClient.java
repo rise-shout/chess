@@ -204,7 +204,7 @@ public class ChessClient {
         try {
             ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
             GameData game = new GameData(0,null,null,gameName);
-            System.out.println("Auth Token: " + userAuthToken);
+            //System.out.println("Auth Token: " + userAuthToken);
             int gameId = serverFacade.createGame(game, loggedInUsername, userAuthToken);
             System.out.println("Game created successfully with ID: " + gameId);
         } catch (Exception e) {
