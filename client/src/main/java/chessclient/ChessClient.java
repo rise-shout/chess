@@ -64,12 +64,16 @@ public class ChessClient {
 
                         break;
                     case "3":
-                        AuthData loginResult = loginUser(scanner);
-                        if (loginResult != null) {
-                            loggedIn = true;
-                            loggedInUsername = loginResult.username();
-                            userAuthToken = loginResult.authToken();
-                            //System.out.println(loginResult);
+                        try {
+                            AuthData loginResult = loginUser(scanner);
+                            if (loginResult != null) {
+                                loggedIn = true;
+                                loggedInUsername = loginResult.username();
+                                userAuthToken = loginResult.authToken();
+                                //System.out.println(loginResult);
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Unable to log in");
                         }
                         break;
                     case "4":
@@ -109,7 +113,11 @@ public class ChessClient {
                         userAuthToken = null;
                         break;
                     case "3":
-                        listGames();
+                        try {
+                            listGames();
+                        } catch (Exception ex) {
+                            System.out.println("No games available");
+                        }
                         break;
                     case "4":
                         createNewGame(scanner);

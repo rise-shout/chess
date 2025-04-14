@@ -29,26 +29,20 @@ public class ServerFacade {
 
     }
 
-    public AuthData login(UserData userToLogin) {
+    public AuthData login(UserData userToLogin) throws Exception {
         // URL for the login endpoint
-        try {
             String path = "/session";
             return this.makeRequest("POST", path, userToLogin, AuthData.class, null);
-        } catch (Exception e){
-            return null;
-        }
+
     }
 
-    public List<GameData> listGames(String authToken) {
+    public List<GameData> listGames(String authToken) throws Exception {
         String path = "/game";
 
         record listGamesResponse(List<GameData> games) {}
-        try {
             listGamesResponse response = this.makeRequest("GET", path, null, listGamesResponse.class, authToken);//FIXME
             return response.games;
-        } catch (Exception e) {
-            return null;
-        }
+
     }
 
     // Method to create a game
