@@ -1,3 +1,5 @@
+package chessclient;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -12,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class ServerFacade {
-    private final String serverUrl;
+    public final String serverUrl;
     private final Gson gson;
 
     public ServerFacade(String serverUrl) {

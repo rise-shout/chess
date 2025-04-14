@@ -1,7 +1,8 @@
+package chessclient;
+
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
-import chess.ChessPosition;
 import ui.EscapeSequences;
 
 import java.io.PrintStream;
@@ -12,9 +13,7 @@ import static ui.EscapeSequences.*;
 public class ChessboardRenderer {
 
     private static final int BOARD_SIZE_IN_SQUARES = 8;
-    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
 
-    private static final String EMPTY = "   ";
     public static void drawBoard(ChessGame currGame, String playerColor) {
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);

@@ -1,13 +1,12 @@
+package chessclient;
 
-
-import chess.ChessBoard;
 import chess.ChessGame;
-import model.AuthData;
 import model.GameData;
 import service.LoginRequest;
 import service.LoginResult;
 import service.RegisterRequest;
 import service.RegisterResult;
+
 
 import java.util.Scanner;
 import java.util.*;
@@ -104,7 +103,7 @@ public class ChessClient {
                         }
                         break;
                     case "6":
-                        watchGame(scanner, userAuthToken, loggedInUsername);
+                        watchGame(scanner, userAuthToken);
                         break;
                     default:
                         System.out.println("\nInvalid choice.");
@@ -160,9 +159,8 @@ public class ChessClient {
         }
     }
 
-    private static void watchGame(Scanner scanner, String userAuthToken, String loggedInUsername) {
-        // First, list the games
-        List<GameData> allGames = listGames(userAuthToken);
+    private static void watchGame(Scanner scanner, String userAuthToken) {
+
 
         // Get the game number and color from the user
         System.out.print("\nEnter the number of the game you want to watch: ");
@@ -263,7 +261,7 @@ public class ChessClient {
         RegisterRequest registerRequest = new RegisterRequest(username, password, email);
 
         try {
-            // Initialize the ServerFacade
+            // Initialize the chessclient.ServerFacade
             ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
             // Call the register method on the serverFacade
             RegisterResult result = serverFacade.register(registerRequest);
