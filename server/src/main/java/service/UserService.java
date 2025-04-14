@@ -53,14 +53,14 @@ public class UserService {
         UserData user = userDAO.getUser(request.username());
 
         // Check if the user exists and the password matches
-        System.out.println("About to check password");
+        //System.out.println("About to check password");
 
         if (user == null || !BCrypt.checkpw(request.password(), user.password())) {
-           System.out.println("No match!");
+           //System.out.println("No match!");
 
-           throw new DataAccessException("Error: incorrect password");
+           throw new DataAccessException("Error: unauthorized");
         }
-        System.out.println("Password match!");
+        //System.out.println("Password match!");
 
         // Generate a new auth token
         String authToken = UUID.randomUUID().toString();

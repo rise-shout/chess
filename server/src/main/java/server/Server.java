@@ -69,7 +69,7 @@ public class Server {
 
     public void stop() {
         Spark.stop();
-        System.out.println("SERVER HAS BEEN STOPPED, NOW WAITING");
+        //System.out.println("SERVER HAS BEEN STOPPED, NOW WAITING");
 
         Spark.awaitStop(); // Wait for Spark to stop completely
         try {
