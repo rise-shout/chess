@@ -90,7 +90,7 @@ public class ChessClient {
                         listGames(userAuthToken);
                         break;
                     case "4":
-                        System.out.println("\nCreating a new game... (Functionality not implemented yet).");
+                        createNewGame(scanner, userAuthToken);
                         break;
                     case "5":
                         System.out.println("\nPick a game to play... (Functionality not implemented yet).");
@@ -105,6 +105,19 @@ public class ChessClient {
         }
 
         scanner.close();
+    }
+
+    private static void createNewGame(Scanner scanner, String userAuthToken) {
+        System.out.print("Enter a unique game name: ");
+        String gameName = scanner.nextLine().trim();
+
+        try {
+            ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+            int gameId = serverFacade.createGame(userAuthToken, gameName);
+            System.out.println("Game created successfully with ID: " + gameId);
+        } catch (Exception e) {
+            System.out.println("Error creating game: " + e.getMessage());
+        }
     }
 
     private static void listGames(String authToken) {
