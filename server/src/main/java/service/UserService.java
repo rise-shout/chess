@@ -63,7 +63,7 @@ public class UserService {
         if (user == null || !BCrypt.checkpw(request.password(), user.password())) {
            System.out.println("No match!");
 
-           throw new DataAccessException("Error: unauthorized");
+           throw new DataAccessException("Error: incorrect password");
         }
         System.out.println("Password match!");
 
@@ -73,6 +73,7 @@ public class UserService {
         authTokenDAO.insertAuth(authData);
 
         // Return the result
+        System.out.println(authToken);
         return new LoginResult(user.username(), authToken);
     }
 

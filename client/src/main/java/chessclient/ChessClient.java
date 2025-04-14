@@ -68,6 +68,7 @@ public class ChessClient {
                             loggedIn = true;
                             loggedInUsername = loginResult.username();
                             userAuthToken = loginResult.authToken();
+                            //System.out.println(loginResult);
                         }
                         break;
                     case "4":
