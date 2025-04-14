@@ -209,16 +209,17 @@ public class ChessClient {
         try {
             ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
             GameData game = new GameData(0,null,null,gameName);
-            int gameId = serverFacade.createGame(game, new AuthData("Token", loggedInUsername));
+            int gameId = serverFacade.createGame(game, loggedInUsername);
             System.out.println("Game created successfully with ID: " + gameId);
         } catch (Exception e) {
             System.out.println("Unable to create game");
+            System.out.println(e);
         }
     }
 
     private static List<GameData> listGames() throws ResponseException {
         ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
-        var games = serverFacade.listGames(new AuthData("Token", loggedInUsername));
+        var games = serverFacade.listGames();
 
 
         try {

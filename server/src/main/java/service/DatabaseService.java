@@ -28,7 +28,9 @@ public class DatabaseService {
         // Clear users and games
         userDAO.clearAllUsers();
         gameDAOVar.clearAllGames();
+        authTokenDAO.clearAllTokens();
 
+        /*
         // Instead of clearing all tokens, clear only those that belong to deleted users
         // Get all auth tokens
         Map<String, AuthData> authTokenMap = authTokenDAO.getAllAuthTokens();
@@ -46,6 +48,7 @@ public class DatabaseService {
 
         // Set the authTokenDAO map to the filtered valid tokens
         authTokenDAO.setAuthTokens(validTokens);
+        */
 
 
     }

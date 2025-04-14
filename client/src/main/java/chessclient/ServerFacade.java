@@ -8,9 +8,6 @@ import com.google.gson.Gson;
 
 import main.exception.ResponseException;
 import model.*;
-import server.GameListResult;
-import service.GameRequest;
-import service.GameResponse;
 import service.JoinGameRequest;
 
 
@@ -30,7 +27,7 @@ public class ServerFacade {
     public UserData register(UserData userToAdd) throws Exception {
         // URL for the register endpoint
         var path = "/user";
-        return this.makeRequest("POST", path, userToAdd, UserData.class, null);
+        return this.makeRequest("POST", path, userToAdd, UserData.class);
 
     }
 
@@ -38,18 +35,18 @@ public class ServerFacade {
         // URL for the login endpoint
         try {
             String path = "/session";
-            return this.makeRequest("POST", path, userToLogin, UserData.class, null);
+            return this.makeRequest("POST", path, userToLogin, UserData.class);
         } catch (Exception e){
             return null;
         }
     }
 
-    public List<GameData> listGames(AuthData authData) throws ResponseException {
+    public List<GameData> listGames() throws ResponseException {
         var path = "/game";
 
         record listGamesResponse(List<GameData> games) {}
         try {
-            var response = this.makeRequest("GET", path, null, listGamesResponse.class, authData);
+            var response = this.makeRequest("GET", path, null, listGamesResponse.class);
             return response.games;
         } catch (ResponseException e) {
             return null;
@@ -57,9 +54,9 @@ public class ServerFacade {
     }
 
     // Method to create a game
-    public int createGame(GameData gameToCreate, AuthData authData) throws Exception {
+    public int createGame(GameData gameToCreate, String username) throws Exception {
         var path = "/game";
-        var request = this.makeRequest("POST", path, gameToCreate, GameData.class, authData);
+        var request = this.makeRequest("POST", path, gameToCreate, GameData.class);
         return request.gameID();
 
         /*
@@ -157,19 +154,16 @@ public class ServerFacade {
         }
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, AuthData authData) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            if(authData != null) {
-                writeBody(request, http, authData.authToken());
-            }
-            else {
-                writeBody(request, http, null);
-            }
+
+            writeBody(request, http);
+
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
@@ -180,12 +174,8 @@ public class ServerFacade {
         }
     }
 
-    private static void writeBody(Object request, HttpURLConnection http, String authToken) throws IOException {
+    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
-
-            if (authToken != null && !authToken.isEmpty()) {
-                http.addRequestProperty("Authorization", authToken);
-            }
 
             http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);

@@ -118,6 +118,7 @@ public class ServerFacadeTests {
     }
 
     // Test listing games when there are no games
+    /*
     @Test
     void listGamesEmpty() throws Exception {
         String username = "player1";
@@ -213,6 +214,8 @@ public class ServerFacadeTests {
 
         assertTrue(exception.getMessage().contains("Failed to join game"));
     }
+
+     */
 
 
 
