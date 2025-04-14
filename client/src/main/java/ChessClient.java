@@ -55,9 +55,11 @@ public class ChessClient {
                 // Post-login menu
                 System.out.println("\n~You are currently logged in as " + loggedInUsername + ".~\nOptions:");
                 System.out.println("\t1. Help");
-                System.out.println("\t2. Start a Game");
-                System.out.println("\t3. Logout");
-                System.out.println("\t4. Quit");
+                System.out.println("\t2. Logout");
+                System.out.println("\t3. List existing games");
+                System.out.println("\t4. Create a new game");
+                System.out.println("\t5. Play an existing game");
+                System.out.println("\t6. Observe a game");
                 System.out.print("What would you like to do: ");
 
                 String input = scanner.nextLine().trim();
@@ -65,21 +67,28 @@ public class ChessClient {
                 switch (input) {
                     case "1":
                         System.out.println("\nHelp: Available commands are:");
-                        System.out.println("\t- Start a Game: Begin a new chess game.");
                         System.out.println("\t- Logout: Log out of your account.");
-                        System.out.println("\t- Quit: Exit the program.");
+                        System.out.println("\t- List existing games: List all games that have been created in the server.");
+                        System.out.println("\t- Create a new game: Adds a new, blank game to the list of existing games.");
+                        System.out.println("\t- Play an existing game: Pick an existing game to join as a player and choose your color.");
+                        System.out.println("\t- Observe a game: Pick an existing game to watch, but not join as a player.");
                         break;
                     case "2":
-                        System.out.println("\nStarting a new game... (Functionality not implemented yet).");
-                        break;
-                    case "3":
                         System.out.println("\nLogging out...");
                         loggedIn = false;
                         loggedInUsername = null;
                         break;
+                    case "3":
+                        System.out.println("\nListing all games... (Functionality not implemented yet).");
+                        break;
                     case "4":
-                        System.out.println("\nGoodbye!");
-                        running = false;
+                        System.out.println("\nCreating a new game... (Functionality not implemented yet).");
+                        break;
+                    case "5":
+                        System.out.println("\nPick a game to play... (Functionality not implemented yet).");
+                        break;
+                    case "6":
+                        System.out.println("\nPick a game to observe... (Functionality not implemented yet).");
                         break;
                     default:
                         System.out.println("\nInvalid choice.");
