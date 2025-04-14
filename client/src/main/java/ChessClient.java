@@ -93,7 +93,7 @@ public class ChessClient {
                         createNewGame(scanner, userAuthToken);
                         break;
                     case "5":
-                        System.out.println("\nPick a game to play... (Functionality not implemented yet).");
+                        playGame(scanner, userAuthToken);
                         break;
                     case "6":
                         System.out.println("\nPick a game to observe... (Functionality not implemented yet).");
@@ -105,6 +105,28 @@ public class ChessClient {
         }
 
         scanner.close();
+    }
+
+    private static void playGame(Scanner scanner, String userAuthToken) {
+        // First, list the games
+        listGames(userAuthToken);
+
+        // Get the game number and color from the user
+        System.out.print("\nEnter the number of the game you want to join: ");
+        int gameNumber = Integer.parseInt(scanner.nextLine().trim());
+
+        System.out.print("Enter the color you want to play (WHITE or BLACK): ");
+        String color = scanner.nextLine().trim().toUpperCase();
+
+        try {
+            ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+
+            // Join the selected game with the specified color
+            serverFacade.joinGame(userAuthToken, gameNumber, color);
+            System.out.println("Successfully joined the game as " + color + ".");
+        } catch (Exception e) {
+            System.out.println("Error joining the game: " + e.getMessage());
+        }
     }
 
     private static void createNewGame(Scanner scanner, String userAuthToken) {
