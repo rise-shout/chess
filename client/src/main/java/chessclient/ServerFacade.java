@@ -7,7 +7,6 @@ import com.google.gson.Gson;
 
 import model.GameData;
 import server.GameListResult;
-import server.UserController;
 import service.*;
 
 import java.nio.charset.StandardCharsets;

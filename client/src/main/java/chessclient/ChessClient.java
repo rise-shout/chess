@@ -1,7 +1,8 @@
 package chessclient;
 
 import chess.ChessGame;
-import model.GameData;
+import dataaccess.MySqlGameDataAccess;
+import model.*;
 import service.LoginRequest;
 import service.LoginResult;
 import service.RegisterRequest;
