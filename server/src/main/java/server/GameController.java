@@ -29,6 +29,7 @@ public class GameController {
         } catch (DataAccessException e) {
             if (e.getMessage().contains("unauthorized")) {
                 res.status(401);
+
             } else if (e.getMessage().contains("bad request")) {
                 res.status(400);
             } else {

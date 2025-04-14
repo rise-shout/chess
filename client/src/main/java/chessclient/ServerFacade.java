@@ -30,55 +30,39 @@ public class ServerFacade {
     public UserData register(UserData userToAdd) throws Exception {
         // URL for the register endpoint
         var path = "/user";
-        return this.makeRequest("POST", path, userToAdd, UserData.class);
+        return this.makeRequest("POST", path, userToAdd, UserData.class, null);
 
     }
 
     public UserData login(UserData userToLogin) throws Exception {
         // URL for the login endpoint
-        String path = "/session";
-        return this.makeRequest("POST", path, userToLogin, UserData.class);
+        try {
+            String path = "/session";
+            return this.makeRequest("POST", path, userToLogin, UserData.class, null);
+        } catch (Exception e){
+            return null;
+        }
     }
 
-    public List<GameData> listGames(String authToken) throws Exception {
-        String endpoint = serverUrl + "/game";
-        URL url = new URL(endpoint);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    public List<GameData> listGames(AuthData authData) throws ResponseException {
+        var path = "/game";
 
+        record listGamesResponse(List<GameData> games) {}
         try {
-            // Set up the connection
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Accept", "application/json");
-            connection.setRequestProperty("Authorization", authToken); // Add the auth token
-            connection.setDoInput(true);
-
-            int statusCode = connection.getResponseCode();
-
-            InputStream responseStream = (statusCode == 200) ? connection.getInputStream() : connection.getErrorStream();
-
-            // Read the response
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(responseStream, StandardCharsets.UTF_8))) {
-                StringBuilder responseBuilder = new StringBuilder();
-                String responseLine;
-                while ((responseLine = br.readLine()) != null) {
-                    responseBuilder.append(responseLine.trim());
-                }
-
-                if (statusCode == 200) {
-                    // Deserialize the JSON response into a GameListResult
-                    GameListResult gameListResult = gson.fromJson(responseBuilder.toString(), GameListResult.class);
-                    return gameListResult.games(); // Extract the list of games
-                } else {
-                    throw new Exception("Failed to retrieve games: " + responseBuilder);
-                }
-            }
-        } finally {
-            connection.disconnect();
+            var response = this.makeRequest("GET", path, null, listGamesResponse.class, authData);
+            return response.games;
+        } catch (ResponseException e) {
+            return null;
         }
     }
 
     // Method to create a game
-    public int createGame(String authToken, String gameName) throws Exception {
+    public int createGame(GameData gameToCreate, AuthData authData) throws Exception {
+        var path = "/game";
+        var request = this.makeRequest("POST", path, gameToCreate, GameData.class, authData);
+        return request.gameID();
+
+        /*
         String endpoint = serverUrl + "/game";
         URL url = new URL(endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -123,6 +107,8 @@ public class ServerFacade {
         } finally {
             connection.disconnect();
         }
+
+         */
     }
 
     public void joinGame(String userAuthToken, int gameNumber, String color) throws Exception{
@@ -171,14 +157,19 @@ public class ServerFacade {
         }
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, AuthData authData) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            writeBody(request, http);
+            if(authData != null) {
+                writeBody(request, http, authData.authToken());
+            }
+            else {
+                writeBody(request, http, null);
+            }
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
@@ -189,8 +180,13 @@ public class ServerFacade {
         }
     }
 
-    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
+    private static void writeBody(Object request, HttpURLConnection http, String authToken) throws IOException {
         if (request != null) {
+
+            if (authToken != null && !authToken.isEmpty()) {
+                http.addRequestProperty("Authorization", authToken);
+            }
+
             http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
@@ -227,6 +223,9 @@ public class ServerFacade {
 
 
     private boolean isSuccessful(int status) {
+        if(status == 401) {
+            System.out.println("MISSING AUTH HEADER");
+        }
         return status / 100 == 2;
     }
 }

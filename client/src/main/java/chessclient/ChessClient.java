@@ -2,6 +2,7 @@ package chessclient;
 
 import chess.ChessGame;
 
+import main.exception.ResponseException;
 import model.*;
 
 
@@ -9,15 +10,24 @@ import java.util.Scanner;
 import java.util.*;
 public class ChessClient {
 
-    public static void main(String[] args) {
+    public static ServerFacade serverFacade;
+    public static String loggedInUsername = null;
+
+    public ChessClient(){
+        ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+    }
+
+    public static void main(String[] args) throws ResponseException {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         boolean loggedIn = false;
         boolean inGame = false;
-        String loggedInUsername = null;
         String userAuthToken = null;
 
         System.out.println("Welcome to the Chess Client!");
+        if(serverFacade == null) {
+            serverFacade = new ServerFacade("http://localhost:8080");
+        }
 
         while (running) {
             if(!loggedIn) {
@@ -38,18 +48,29 @@ public class ChessClient {
                         System.out.println("\t- Quit: Exit the program.");
                         break;
                     case "2":
-                        UserData newUser = registerUser(scanner);
-                        loggedIn = true;
-                        assert newUser != null;
-                        loggedInUsername = newUser.username();
-                        //userAuthToken = newUser.authToken();
+                        try {
+                            UserData newUser = registerUser(scanner);
+                            loggedIn = true;
+                            assert newUser != null;
+                            loggedInUsername = newUser.username();
+                            AuthData newData = new AuthData("token", newUser.username());
+                            userAuthToken = newData.authToken();
+                        }catch (Exception e) {
+                            loggedIn = false;
+                            loggedInUsername = null;
+                            userAuthToken = null;
+                            System.out.println("Registration failed.");
+                        }
+
                         break;
                     case "3":
                         UserData loginResult = loginUser(scanner);
-                        loggedIn = true;
-                        assert loginResult != null;
-                        loggedInUsername = loginResult.username();
-                        //userAuthToken = loginResult.authToken();
+                        if (loginResult != null) {
+                            loggedIn = true;
+                            loggedInUsername = loginResult.username();
+                            AuthData data = new AuthData("token", loggedInUsername);
+                            userAuthToken = data.authToken();
+                        }
                         break;
                     case "4":
                         System.out.println("\nGoodbye!");
@@ -85,12 +106,13 @@ public class ChessClient {
                         System.out.println("\nLogging out...");
                         loggedIn = false;
                         loggedInUsername = null;
+                        userAuthToken = null;
                         break;
                     case "3":
-                        listGames(userAuthToken);
+                        listGames();
                         break;
                     case "4":
-                        createNewGame(scanner, userAuthToken);
+                        createNewGame(scanner);
                         break;
                     case "5":
                         inGame = true;
@@ -112,9 +134,9 @@ public class ChessClient {
         scanner.close();
     }
 
-    private static void playGame(Scanner scanner, String userAuthToken, String loggedInUsername) {
+    private static void playGame(Scanner scanner, String userAuthToken, String loggedInUsername) throws ResponseException {
         // First, list the games
-        List<GameData> allGames = listGames(userAuthToken);
+        List<GameData> allGames = listGames();
 
         // Get the game number and color from the user
         System.out.print("\nEnter the number of the game you want to join: ");
@@ -180,25 +202,30 @@ public class ChessClient {
         }
     }
 
-    private static void createNewGame(Scanner scanner, String userAuthToken) {
+    private static void createNewGame(Scanner scanner) {
         System.out.print("Enter a unique game name: ");
         String gameName = scanner.nextLine().trim();
 
         try {
             ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
-            int gameId = serverFacade.createGame(userAuthToken, gameName);
+            GameData game = new GameData(0,null,null,gameName);
+            int gameId = serverFacade.createGame(game, new AuthData("Token", loggedInUsername));
             System.out.println("Game created successfully with ID: " + gameId);
         } catch (Exception e) {
             System.out.println("Unable to create game");
         }
     }
 
-    private static List<GameData> listGames(String authToken) {
-        try {
-            ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
-            List<GameData> games = serverFacade.listGames(authToken); // Pass the auth token
+    private static List<GameData> listGames() throws ResponseException {
+        ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+        var games = serverFacade.listGames(new AuthData("Token", loggedInUsername));
 
-            if (games.isEmpty()) {
+
+        try {
+            //ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+            //List<GameData> games = serverFacade.listGames(authToken); // Pass the auth token
+
+            if (games == null || games.isEmpty()) {
                 System.out.println("\nNo games available on the server.");
                 return null;
             } else {
@@ -232,7 +259,7 @@ public class ChessClient {
 
         try {
             UserData user = new UserData(username, password, null);
-            ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+
             UserData result = serverFacade.login(user);
             System.out.println("Login successful! Welcome, " + result.username());
             return result;
@@ -260,7 +287,7 @@ public class ChessClient {
 
         try {
             // Initialize the chessclient.ServerFacade
-            ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+            //ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
             // Call the register method on the serverFacade
             UserData result = serverFacade.register(user);
 
@@ -269,11 +296,9 @@ public class ChessClient {
                 System.out.println("Registration successful! Welcome, " + result.username());
                 return result;
             } else {
-                System.out.println("Registration failed. Please try again.");
                 return null;
             }
         } catch (Exception e) {
-            System.out.println("Registration failed.");
             return null;
         }
     }
