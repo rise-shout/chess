@@ -4,7 +4,7 @@ import model.AuthData;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AuthTokenDAO {
+public class AuthTokenDAO implements AuthDataAccess{
     private static AuthTokenDAO instance;
     private static Map<String, AuthData> authTokenMap;
 

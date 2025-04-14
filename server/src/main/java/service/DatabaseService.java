@@ -9,7 +9,7 @@ import java.util.Map;
 public class DatabaseService {
     private final UserDataAccess userDAO;
     private final GameDataAccess gameDAOVar;
-    private final AuthTokenDAO authTokenDAO;
+    private final AuthDataAccess authTokenDAO;
 
     public DatabaseService() {
         this.userDAO = new UserDAO();
@@ -17,7 +17,7 @@ public class DatabaseService {
         this.authTokenDAO = new AuthTokenDAO();
     }
 
-    public DatabaseService(UserDataAccess userDAO, GameDataAccess gameDAO, AuthTokenDAO authTokenDAO) {
+    public DatabaseService(UserDataAccess userDAO, GameDataAccess gameDAO, AuthDataAccess authTokenDAO) {
         this.userDAO = userDAO;
         this.gameDAOVar = gameDAO;
         this.authTokenDAO =authTokenDAO;

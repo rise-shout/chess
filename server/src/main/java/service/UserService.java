@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.AuthTokenDAO;
-import dataaccess.DataAccessException;
-import dataaccess.UserDAO;
-import dataaccess.UserDataAccess;
+import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 
@@ -14,14 +11,14 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
     private final UserDataAccess userDAO;
-    private final AuthTokenDAO authTokenDAO;
+    private final AuthDataAccess authTokenDAO;
 
     public UserService() {
         this.userDAO = new UserDAO();
         this.authTokenDAO = AuthTokenDAO.getInstance();
     }
 
-    public UserService(UserDataAccess userDAO, AuthTokenDAO authTokenDAO) {
+    public UserService(UserDataAccess userDAO, AuthDataAccess authTokenDAO) {
         this.userDAO = userDAO;
         this.authTokenDAO = authTokenDAO;
     }

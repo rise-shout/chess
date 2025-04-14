@@ -24,19 +24,21 @@ public class Server {
         // Determine which data access implementation to use
         GameDataAccess gameDAO;
         UserDataAccess userDAO;
-        AuthTokenDAO authTokenDAO = AuthTokenDAO.getInstance();
+        AuthDataAccess authTokenDAO;
 
 
         String storageType = System.getProperty("storageType", "sql"); // Default to 'sql' if not set
 
         // Choose which DAO to use based on storageType
-        userDAO = new MySqlUserDataAccess(); // Assuming MySqlUserDataAccess is similar to MySqlGameDataAccess
         if ("sql".equalsIgnoreCase(storageType)) {
             gameDAO = new MySqlGameDataAccess();
+            userDAO = new MySqlUserDataAccess();
+            authTokenDAO = new MySqlAuthDataAccess();
         } else {
             // Use in-memory or another storage implementation (make sure to implement these)
             gameDAO = new GameDAO();
             userDAO = new UserDAO();
+            authTokenDAO = new AuthTokenDAO();
         }
 
 
