@@ -6,11 +6,10 @@ import java.net.URI;
 import java.net.URL;
 import com.google.gson.Gson;
 
-import main.exception.ResponseException;
+import exception.ResponseException;
 import model.*;
 
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class ServerFacade {
@@ -30,7 +29,7 @@ public class ServerFacade {
 
     }
 
-    public UserData login(UserData userToLogin) throws Exception {
+    public UserData login(UserData userToLogin) {
         // URL for the login endpoint
         try {
             String path = "/session";
@@ -40,7 +39,7 @@ public class ServerFacade {
         }
     }
 
-    public List<GameData> listGames() throws ResponseException {
+    public List<GameData> listGames() {
         String path = "/game";
 
         record listGamesResponse(List<GameData> games) {}
