@@ -38,12 +38,12 @@ public class ServerFacade {
         }
     }
 
-    public List<GameData> listGames() {
+    public List<GameData> listGames(String authToken) {
         String path = "/game";
 
         record listGamesResponse(List<GameData> games) {}
         try {
-            listGamesResponse response = this.makeRequest("GET", path, null, listGamesResponse.class, null);//FIXME
+            listGamesResponse response = this.makeRequest("GET", path, null, listGamesResponse.class, authToken);//FIXME
             return response.games;
         } catch (Exception e) {
             return null;
@@ -53,7 +53,7 @@ public class ServerFacade {
     // Method to create a game
     public int createGame(GameData gameToCreate, String username, String authToken) throws Exception {
         String path = "/game";
-        System.out.println("Auth Token: " + authToken);
+        System.out.println("Auth Token in create game: " + authToken);
         GameData request = this.makeRequest("POST", path, gameToCreate, GameData.class, authToken);
         return request.gameID();
 
@@ -73,11 +73,8 @@ public class ServerFacade {
 
             if (authToken != null) {
                 http.addRequestProperty("Authorization", authToken); // Add the token to the header
+                System.out.println("Auth Token in make request: " + authToken);
             }
-
-            System.out.println("Auth Token: " + authToken);
-
-
 
             writeBody(request, http);
 

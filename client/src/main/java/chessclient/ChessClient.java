@@ -54,6 +54,7 @@ public class ChessClient {
                             assert newUser != null;
                             loggedInUsername = newUser.username();
                             userAuthToken = newUser.authToken();
+                            //System.out.println(newUser);
                         }catch (Exception e) {
                             loggedIn = false;
                             loggedInUsername = null;
@@ -219,7 +220,7 @@ public class ChessClient {
 
     private static List<GameData> listGames() throws Exception  {
         ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
-        List<GameData> games = serverFacade.listGames();
+        List<GameData> games = serverFacade.listGames(userAuthToken);
 
 
         try {
