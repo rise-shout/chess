@@ -6,6 +6,7 @@ import java.net.URI;
 import java.net.URL;
 import com.google.gson.Gson;
 
+import com.google.gson.JsonObject;
 import model.*;
 
 
@@ -53,7 +54,7 @@ public class ServerFacade {
     // Method to create a game
     public int createGame(GameData gameToCreate, String username, String authToken) throws Exception {
         String path = "/game";
-        System.out.println("Auth Token in create game: " + authToken);
+        //System.out.println("Auth Token in create game: " + authToken);
         GameData request = this.makeRequest("POST", path, gameToCreate, GameData.class, authToken);
         return request.gameID();
 
@@ -61,6 +62,9 @@ public class ServerFacade {
     }
 
     public void joinGame(String userAuthToken, int gameNumber, String color) throws Exception{
+            String path = "/game";
+            //System.out.println("Auth Token in create game: " + userAuthToken);
+            this.makeRequestTwo("PUT", path, gameNumber, color, GameData.class, userAuthToken);
 
     }
 
@@ -73,8 +77,10 @@ public class ServerFacade {
 
             if (authToken != null) {
                 http.addRequestProperty("Authorization", authToken); // Add the token to the header
-                System.out.println("Auth Token in make request: " + authToken);
+                //System.out.println("Auth Token in make request: " + authToken);
             }
+
+            //System.out.println();
 
             writeBody(request, http);
 
@@ -85,6 +91,49 @@ public class ServerFacade {
             throw new Exception("500 error");
         }
     }
+
+    private <T> void makeRequestTwo(String method, String path, Object request1, Object request2, Class<T> responseClass, String authToken) throws Exception {
+
+            URL url = (new URI(serverUrl + path)).toURL();
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            http.setRequestMethod(method);
+            http.setDoOutput(true);
+
+            if (authToken != null) {
+                http.addRequestProperty("Authorization", authToken);
+                //System.out.println("Auth Token in make request two: " + authToken);
+            }
+
+            // Combine request1 and request2 into a single JSON object
+            writeBody(request1, request2, http);
+
+            http.connect();
+            throwIfNotSuccessful(http);
+            readBody(http, responseClass);
+
+    }
+
+    private static void writeBody(Object request1, Object request2, HttpURLConnection http) throws IOException {
+        if (request1 != null && request2 != null) {
+            http.addRequestProperty("Content-Type", "application/json");
+
+            // Combine the two objects into one JSON
+            Gson gson = new Gson();
+            // Create a JsonObject and add the parts
+            JsonObject combinedJson = new JsonObject();
+            combinedJson.add("gameID", new Gson().toJsonTree(request1));
+            combinedJson.add("playerColor", new Gson().toJsonTree(request2));
+
+            String combinedJsonString = combinedJson.toString();
+            //System.out.println(combinedJsonString);
+
+            try (OutputStream reqBody = http.getOutputStream()) {
+                reqBody.write(combinedJsonString.getBytes());
+            }
+        }
+    }
+
+
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
@@ -125,9 +174,6 @@ public class ServerFacade {
 
 
     private boolean isSuccessful(int status) {
-        if(status == 401) {
-            System.out.println("MISSING AUTH HEADER");
-        }
         return status / 100 == 2;
     }
 }

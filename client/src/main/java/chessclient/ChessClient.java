@@ -119,6 +119,7 @@ public class ChessClient {
                         try {
                             playGame(scanner, userAuthToken, loggedInUsername);
                         } catch (Exception e) {
+                            System.out.println("Unable to join game");
                             inGame = false;
                         }
                         break;
@@ -146,12 +147,12 @@ public class ChessClient {
         boolean resumeGame = false;
 
         assert allGames != null;
-        if(allGames.get(gameNumber-1).blackUsername().equals(loggedInUsername)) {
+        if(allGames.get(gameNumber-1).blackUsername() != null && allGames.get(gameNumber-1).blackUsername().equals(loggedInUsername)) {
             System.out.println("You have joined this game previously as the black player. Resuming game...");
             color = "BLACK";
             resumeGame = true;
         }
-        else if(allGames.get(gameNumber-1).whiteUsername().equals(loggedInUsername)) {
+        else if(allGames.get(gameNumber-1).whiteUsername() != null && allGames.get(gameNumber-1).whiteUsername().equals(loggedInUsername)) {
             System.out.println("You have joined this game previously as the white player. Resuming game...");
             color = "WHITE";
             resumeGame = true;
@@ -161,7 +162,7 @@ public class ChessClient {
             color = scanner.nextLine().trim().toUpperCase();
         }
 
-        try {
+
             if(!resumeGame) {
                 ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
 
@@ -174,9 +175,7 @@ public class ChessClient {
             //NOTE: THIS IS A GENERIC BOARD, NOT THE ACTUAL GAME BOARD
             ChessboardRenderer.drawBoard(new ChessGame(), color);  // Display the board from the correct perspective
 
-        } catch (Exception e) {
-            System.out.println("Unable to join game.");
-        }
+
     }
 
     private static void watchGame(Scanner scanner, String userAuthToken) {
@@ -224,9 +223,6 @@ public class ChessClient {
 
 
         try {
-            //ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
-            //List<GameData> games = serverFacade.listGames(authToken); // Pass the auth token
-
             if (games == null || games.isEmpty()) {
                 System.out.println("\nNo games available on the server.");
                 return null;
