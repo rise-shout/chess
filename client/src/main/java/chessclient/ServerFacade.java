@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 
 import main.exception.ResponseException;
 import model.*;
-import service.JoinGameRequest;
 
 
 import java.nio.charset.StandardCharsets;
@@ -26,7 +25,7 @@ public class ServerFacade {
     // Implement the register method similar to login
     public UserData register(UserData userToAdd) throws Exception {
         // URL for the register endpoint
-        var path = "/user";
+        String path = "/user";
         return this.makeRequest("POST", path, userToAdd, UserData.class);
 
     }
@@ -42,11 +41,11 @@ public class ServerFacade {
     }
 
     public List<GameData> listGames() throws ResponseException {
-        var path = "/game";
+        String path = "/game";
 
         record listGamesResponse(List<GameData> games) {}
         try {
-            var response = this.makeRequest("GET", path, null, listGamesResponse.class);
+            listGamesResponse response = this.makeRequest("GET", path, null, listGamesResponse.class);
             return response.games;
         } catch (ResponseException e) {
             return null;
@@ -55,8 +54,8 @@ public class ServerFacade {
 
     // Method to create a game
     public int createGame(GameData gameToCreate, String username) throws Exception {
-        var path = "/game";
-        var request = this.makeRequest("POST", path, gameToCreate, GameData.class);
+        String path = "/game";
+        GameData request = this.makeRequest("POST", path, gameToCreate, GameData.class);
         return request.gameID();
 
         /*
@@ -109,6 +108,7 @@ public class ServerFacade {
     }
 
     public void joinGame(String userAuthToken, int gameNumber, String color) throws Exception{
+        /*
         String endpoint = serverUrl + "/game";
         URL url = new URL(endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -152,6 +152,7 @@ public class ServerFacade {
         } finally {
             connection.disconnect();
         }
+         */
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
@@ -186,7 +187,7 @@ public class ServerFacade {
     }
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
-        var status = http.getResponseCode();
+        int status = http.getResponseCode();
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {

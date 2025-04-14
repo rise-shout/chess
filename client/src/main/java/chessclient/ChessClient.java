@@ -2,7 +2,7 @@ package chessclient;
 
 import chess.ChessGame;
 
-import main.exception.ResponseException;
+
 import model.*;
 
 
@@ -17,7 +17,7 @@ public class ChessClient {
         ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
     }
 
-    public static void main(String[] args) throws ResponseException {
+    public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         boolean loggedIn = false;
@@ -134,7 +134,7 @@ public class ChessClient {
         scanner.close();
     }
 
-    private static void playGame(Scanner scanner, String userAuthToken, String loggedInUsername) throws ResponseException {
+    private static void playGame(Scanner scanner, String userAuthToken, String loggedInUsername) throws Exception  {
         // First, list the games
         List<GameData> allGames = listGames();
 
@@ -213,13 +213,13 @@ public class ChessClient {
             System.out.println("Game created successfully with ID: " + gameId);
         } catch (Exception e) {
             System.out.println("Unable to create game");
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
-    private static List<GameData> listGames() throws ResponseException {
+    private static List<GameData> listGames() throws Exception  {
         ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
-        var games = serverFacade.listGames();
+        List<GameData> games = serverFacade.listGames();
 
 
         try {
