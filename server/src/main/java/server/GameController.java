@@ -22,6 +22,13 @@ public class GameController {
     public Route createGame = (Request req, Response res) -> {
         try {
             String authToken = req.headers("authorization");
+
+            // Validate the auth token
+            if (authToken == null || authToken.isEmpty()) {
+                res.status(401);
+                return gson.toJson(new ErrorResult("Error: unauthorized CAUGHT EARLY"));
+            }
+
             GameRequest gameRequest = gson.fromJson(req.body(), GameRequest.class);
             int gameId = gameService.createGame(authToken, gameRequest.gameName());
             res.status(200);

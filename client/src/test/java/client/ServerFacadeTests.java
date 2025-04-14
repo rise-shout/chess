@@ -1,5 +1,6 @@
 package client;
 
+import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
@@ -62,7 +63,7 @@ public class ServerFacadeTests {
         String email = "p1@email.com";
 
         // Register a user
-        UserData result = facade.register(new UserData(username, password, email));
+        AuthData result = facade.register(new UserData(username, password, email));
 
         // Validate the result
         assertNotNull(result);
@@ -96,7 +97,7 @@ public class ServerFacadeTests {
         facade.register(new UserData(username, password, email));
 
         // Now, login
-        UserData loginResult = facade.login(new UserData(username, password, null));
+        AuthData loginResult = facade.login(new UserData(username, password, null));
 
         // Validate the login result
         assertNotNull(loginResult);

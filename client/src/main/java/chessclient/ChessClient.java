@@ -12,6 +12,7 @@ public class ChessClient {
 
     public static ServerFacade serverFacade;
     public static String loggedInUsername = null;
+    public static String userAuthToken = null;
 
     public ChessClient(){
         ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
@@ -22,7 +23,6 @@ public class ChessClient {
         boolean running = true;
         boolean loggedIn = false;
         boolean inGame = false;
-        String userAuthToken = null;
 
         System.out.println("Welcome to the Chess Client!");
         if(serverFacade == null) {
@@ -49,12 +49,11 @@ public class ChessClient {
                         break;
                     case "2":
                         try {
-                            UserData newUser = registerUser(scanner);
+                            AuthData newUser = registerUser(scanner);
                             loggedIn = true;
                             assert newUser != null;
                             loggedInUsername = newUser.username();
-                            AuthData newData = new AuthData("token", newUser.username());
-                            userAuthToken = newData.authToken();
+                            userAuthToken = newUser.authToken();
                         }catch (Exception e) {
                             loggedIn = false;
                             loggedInUsername = null;
@@ -64,12 +63,11 @@ public class ChessClient {
 
                         break;
                     case "3":
-                        UserData loginResult = loginUser(scanner);
+                        AuthData loginResult = loginUser(scanner);
                         if (loginResult != null) {
                             loggedIn = true;
                             loggedInUsername = loginResult.username();
-                            AuthData data = new AuthData("token", loggedInUsername);
-                            userAuthToken = data.authToken();
+                            userAuthToken = loginResult.authToken();
                         }
                         break;
                     case "4":
@@ -209,7 +207,8 @@ public class ChessClient {
         try {
             ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
             GameData game = new GameData(0,null,null,gameName);
-            int gameId = serverFacade.createGame(game, loggedInUsername);
+            System.out.println("Auth Token: " + userAuthToken);
+            int gameId = serverFacade.createGame(game, loggedInUsername, userAuthToken);
             System.out.println("Game created successfully with ID: " + gameId);
         } catch (Exception e) {
             System.out.println("Unable to create game");
@@ -252,7 +251,7 @@ public class ChessClient {
         return null;
     }
 
-    private static UserData loginUser(Scanner scanner) {
+    private static AuthData loginUser(Scanner scanner) {
         System.out.print("\nEnter username: ");
         String username = scanner.nextLine();
         System.out.print("Enter password: ");
@@ -261,7 +260,7 @@ public class ChessClient {
         try {
             UserData user = new UserData(username, password, null);
 
-            UserData result = serverFacade.login(user);
+            AuthData result = serverFacade.login(user);
             System.out.println("Login successful! Welcome, " + result.username());
             return result;
         } catch (Exception e) {
@@ -271,7 +270,7 @@ public class ChessClient {
     }
 
     // Method to handle user registration
-    private static UserData registerUser(Scanner scanner) {
+    private static AuthData registerUser(Scanner scanner) {
         System.out.println("\nRegistering a new user:");
 
         System.out.print("Enter username: ");
@@ -290,7 +289,7 @@ public class ChessClient {
             // Initialize the chessclient.ServerFacade
             //ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
             // Call the register method on the serverFacade
-            UserData result = serverFacade.register(user);
+            AuthData result = serverFacade.register(user);
 
             // Check if registration was successful
             if (result != null) {

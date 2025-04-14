@@ -6,7 +6,6 @@ import java.net.URI;
 import java.net.URL;
 import com.google.gson.Gson;
 
-import exception.ResponseException;
 import model.*;
 
 
@@ -22,18 +21,18 @@ public class ServerFacade {
     }
 
     // Implement the register method similar to login
-    public UserData register(UserData userToAdd) throws Exception {
+    public AuthData register(UserData userToAdd) throws Exception {
         // URL for the register endpoint
         String path = "/user";
-        return this.makeRequest("POST", path, userToAdd, UserData.class);
+        return this.makeRequest("POST", path, userToAdd, AuthData.class, null);
 
     }
 
-    public UserData login(UserData userToLogin) {
+    public AuthData login(UserData userToLogin) {
         // URL for the login endpoint
         try {
             String path = "/session";
-            return this.makeRequest("POST", path, userToLogin, UserData.class);
+            return this.makeRequest("POST", path, userToLogin, AuthData.class, null);
         } catch (Exception e){
             return null;
         }
@@ -44,122 +43,40 @@ public class ServerFacade {
 
         record listGamesResponse(List<GameData> games) {}
         try {
-            listGamesResponse response = this.makeRequest("GET", path, null, listGamesResponse.class);
+            listGamesResponse response = this.makeRequest("GET", path, null, listGamesResponse.class, null);//FIXME
             return response.games;
-        } catch (ResponseException e) {
+        } catch (Exception e) {
             return null;
         }
     }
 
     // Method to create a game
-    public int createGame(GameData gameToCreate, String username) throws Exception {
+    public int createGame(GameData gameToCreate, String username, String authToken) throws Exception {
         String path = "/game";
-        GameData request = this.makeRequest("POST", path, gameToCreate, GameData.class);
+        System.out.println("Auth Token: " + authToken);
+        GameData request = this.makeRequest("POST", path, gameToCreate, GameData.class, authToken);
         return request.gameID();
 
-        /*
-        String endpoint = serverUrl + "/game";
-        URL url = new URL(endpoint);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        try {
-            // Set up the connection
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Authorization", authToken);  // Set the authorization token
-            connection.setDoOutput(true);
-
-            // Create the request body
-            GameRequest gameRequest = new GameRequest(gameName);
-            String jsonRequest = gson.toJson(gameRequest);
-
-            // Write the JSON to the request body
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = jsonRequest.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-
-            // Get the response code and handle accordingly
-            int statusCode = connection.getResponseCode();
-            InputStream responseStream = (statusCode == 200) ? connection.getInputStream() : connection.getErrorStream();
-
-            // Read the response
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(responseStream, StandardCharsets.UTF_8))) {
-                StringBuilder responseBuilder = new StringBuilder();
-                String responseLine;
-                while ((responseLine = br.readLine()) != null) {
-                    responseBuilder.append(responseLine.trim());
-                }
-
-                if (statusCode == 200) {
-                    // Successfully created game, parse the response and return game ID
-                    GameResponse gameResponse = gson.fromJson(responseBuilder.toString(), GameResponse.class);
-                    return gameResponse.gameID();  // Return the created game ID
-                } else {
-                    throw new Exception("Failed to create game: " + responseBuilder);
-                }
-            }
-        } finally {
-            connection.disconnect();
-        }
-
-         */
     }
 
     public void joinGame(String userAuthToken, int gameNumber, String color) throws Exception{
-        /*
-        String endpoint = serverUrl + "/game";
-        URL url = new URL(endpoint);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-
-        try {
-            // Set up the connection
-            connection.setRequestMethod("PUT");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Authorization", userAuthToken);  // Set the authorization token
-            connection.setDoOutput(true);
-
-            // Create the request body
-            JoinGameRequest joinRequest = new JoinGameRequest(color, gameNumber);
-            String jsonRequest = gson.toJson(joinRequest);
-
-            // Write the JSON to the request body
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = jsonRequest.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-
-            // Get the response code and handle accordingly
-            int statusCode = connection.getResponseCode();
-            InputStream responseStream = (statusCode == 200) ? connection.getInputStream() : connection.getErrorStream();
-
-            // Read the response
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(responseStream, StandardCharsets.UTF_8))) {
-                StringBuilder responseBuilder = new StringBuilder();
-                String responseLine;
-                while ((responseLine = br.readLine()) != null) {
-                    responseBuilder.append(responseLine.trim());
-                }
-
-                if (statusCode == 200) {
-                    System.out.println("Joined game successfully.");
-                } else {
-                    throw new Exception("Failed to join game: " + responseBuilder);
-                }
-            }
-        } finally {
-            connection.disconnect();
-        }
-         */
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws Exception {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            if (authToken != null) {
+                http.addRequestProperty("Authorization", authToken); // Add the token to the header
+            }
+
+            System.out.println("Auth Token: " + authToken);
+
 
 
             writeBody(request, http);
@@ -167,17 +84,17 @@ public class ServerFacade {
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
-        } catch (ResponseException ex) {
-            throw ex;
         } catch (Exception ex) {
-            throw new ResponseException(500, ex.getMessage());
+            throw new Exception("500 error");
         }
     }
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
 
+
             http.addRequestProperty("Content-Type", "application/json");
+
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
@@ -185,16 +102,14 @@ public class ServerFacade {
         }
     }
 
-    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
+    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException,Exception {
         int status = http.getResponseCode();
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
-                    throw ResponseException.fromJson(respErr);
+                    throw new Exception("Not successful");
                 }
             }
-
-            throw new ResponseException(status, "other failure: " + status);
         }
     }
 
