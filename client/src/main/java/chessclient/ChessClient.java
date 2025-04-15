@@ -4,6 +4,7 @@ import chess.ChessGame;
 
 
 import model.*;
+import server.ServerFacade;
 
 
 import java.util.Scanner;
@@ -291,7 +292,7 @@ public class ChessClient {
         UserData user = new UserData(username, password, email);
 
         try {
-            // Initialize the chessclient.ServerFacade
+            // Initialize the server.ServerFacade
             //ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
             // Call the register method on the serverFacade
             AuthData result = serverFacade.register(user);

@@ -17,6 +17,29 @@ public class ServerMessage {
         NOTIFICATION
     }
 
+    //-----DO NOT CHANGE ABOVE-------//
+
+    public class Notification extends ServerMessage {
+        public Notification(ServerMessageType type) {
+            super(type);
+        }
+    }
+
+    public class Error extends ServerMessage {
+
+        public Error(ServerMessageType type) {
+            super(type);
+        }
+    }
+
+    public class LoadGame extends ServerMessage {
+        public LoadGame(ServerMessageType type) {
+            super(type);
+        }
+    }
+
+    //-----DO NOT CHANGE BELOW-------//
+
     public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
     }

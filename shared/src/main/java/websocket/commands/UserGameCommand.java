@@ -1,5 +1,7 @@
 package websocket.commands;
 
+import websocket.messages.ServerMessage;
+
 import java.util.Objects;
 
 /**
@@ -28,6 +30,38 @@ public class UserGameCommand {
         LEAVE,
         RESIGN
     }
+
+    //-----DO NOT CHANGE ABOVE-------//
+
+    public class Connect extends UserGameCommand {
+
+        public Connect(CommandType commandType, String authToken, Integer gameID) {
+            super(commandType, authToken, gameID);
+        }
+    }
+
+    public class Leave extends UserGameCommand {
+
+        public Leave(CommandType commandType, String authToken, Integer gameID) {
+            super(commandType, authToken, gameID);
+        }
+    }
+
+    public class Resign extends UserGameCommand {
+
+        public Resign(CommandType commandType, String authToken, Integer gameID) {
+            super(commandType, authToken, gameID);
+        }
+    }
+
+    public class MakeMove extends UserGameCommand {
+
+        public MakeMove(CommandType commandType, String authToken, Integer gameID) {
+            super(commandType, authToken, gameID);
+        }
+    }
+
+    //-----DO NOT CHANGE BELOW-------//
 
     public CommandType getCommandType() {
         return commandType;
