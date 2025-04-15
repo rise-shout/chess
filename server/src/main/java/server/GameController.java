@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import model.GameData;
@@ -83,11 +84,11 @@ public class GameController {
             }
 
             // Call the service to join the game
-            gameService.joinGame(authToken, joinGameRequest.gameID(), joinGameRequest.playerColor());
+            ChessGame currentGame = gameService.joinGame(authToken, joinGameRequest.gameID(), joinGameRequest.playerColor());
 
             // Return a successful response
             res.status(200);
-            return "{}"; // Empty JSON response
+            return gson.toJson(new JoinGameResult(currentGame)); // Empty JSON response
 
         } catch (DataAccessException e) {
             if (e.getMessage().contains("unauthorized")) {

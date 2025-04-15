@@ -191,7 +191,7 @@ public class ChessClient {
                 ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
 
                 // Join the selected game with the specified color
-                serverFacade.joinGame(userAuthToken, gameNumber, color);
+                ChessGame currentGame = serverFacade.joinGame(userAuthToken, gameNumber, color);
                 System.out.println("Successfully joined the game as " + color + ".");
             }
 
@@ -232,11 +232,10 @@ public class ChessClient {
 
         try {
             ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
-            String defaultBoard = "R,N,B,Q,K,B,N,R;P,P,P,P,P,P,P,P; , , , , , , , ; , , , , , , , ; , , , , , , , ; , , , , , , , ;p,p,p,p,p,p,p,p;r,n,b,q,k,b,n,r;";
-            GameData game = new GameData(0,null,null,gameName, defaultBoard);
+            GameData game = new GameData(0,null,null,gameName);
             //System.out.println("Auth Token: " + userAuthToken);
-            int gameId = serverFacade.createGame(game, loggedInUsername, userAuthToken);
-            System.out.println("Game created successfully with ID: " + gameId);
+            serverFacade.createGame(game, loggedInUsername, userAuthToken);
+            System.out.println("Game created successfully!");
         } catch (Exception e) {
             System.out.println("Unable to create game");
             System.out.println(e.getMessage());

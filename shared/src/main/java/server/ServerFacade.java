@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+
+import chess.ChessGame;
 import com.google.gson.Gson;
 
 import com.google.gson.JsonObject;
@@ -60,11 +62,13 @@ public class ServerFacade {
 
     }
 
-    public void joinGame(String userAuthToken, int gameNumber, String color) throws Exception{
+    public ChessGame joinGame(String userAuthToken, int gameNumber, String color) throws Exception{
             String path = "/game";
             //System.out.println("Auth Token in create game: " + userAuthToken);
-            this.makeRequestTwo("PUT", path, gameNumber, color, GameData.class, userAuthToken);
 
+            record ChessGameResponse(ChessGame currentGame) {}
+                ChessGameResponse response = this.makeRequestTwo("PUT", path, gameNumber, color, ChessGameResponse.class, userAuthToken);
+                return response.currentGame;
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws Exception {
@@ -91,7 +95,7 @@ public class ServerFacade {
         }
     }
 
-    private <T> void makeRequestTwo(String method, String path, Object request1, Object request2, Class<T> responseClass, String authToken) throws Exception {
+    private <T> T makeRequestTwo(String method, String path, Object request1, Object request2, Class<T> responseClass, String authToken) throws Exception {
 
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -108,7 +112,7 @@ public class ServerFacade {
 
             http.connect();
             throwIfNotSuccessful(http);
-            readBody(http, responseClass);
+            return readBody(http, responseClass);
 
     }
 

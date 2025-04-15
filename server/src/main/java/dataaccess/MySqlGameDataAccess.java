@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 
@@ -24,9 +25,9 @@ public class MySqlGameDataAccess implements GameDataAccess {
     @Override
     public int insertGame(GameData game) throws DataAccessException {
         var statement = "INSERT INTO game (player_white, player_black, game_name, game_state) VALUES (?, ?, ?, ?)";
-        //var gameState = new Gson().toJson(game); // Serialize game state
+        var gameState = new Gson().toJson(new ChessGame()); // Serialize game state
         return executeUpdate(statement, game.whiteUsername(),
-                game.blackUsername(), game.gameName(), game.gameState());
+                game.blackUsername(), game.gameName(), gameState);
     }
 
     @Override
@@ -53,7 +54,24 @@ public class MySqlGameDataAccess implements GameDataAccess {
         String blackUsername = rs.getString("player_black");
         String gameName = rs.getString("game_name");
         String gameState = rs.getString("game_state");
-        return new GameData(id, whiteUsername, blackUsername, gameName, gameState);
+        return new GameData(id, whiteUsername, blackUsername, gameName);
+    }
+
+    private ChessGame getChessGame (ResultSet rs) throws SQLException {
+        // Retrieve the game_state column as a string
+        String gameState = rs.getString("game_state");
+
+        // Check if gameState is not null
+        if (gameState == null || gameState.isEmpty()) {
+            throw new SQLException("Game state is null or empty for the current row.");
+        }
+
+        // Use Gson to deserialize the JSON string into a ChessGame object
+        try {
+            return new Gson().fromJson(gameState, ChessGame.class);
+        } catch (Exception e) {
+            throw new SQLException("Failed to deserialize game state: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -105,6 +123,30 @@ public class MySqlGameDataAccess implements GameDataAccess {
     public void clearAllGames() throws DataAccessException {
         String statement = "TRUNCATE game";
         executeUpdate(statement);
+    }
+
+    @Override
+    public ChessGame getChessGame(int gameId) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT game_state FROM game WHERE id=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameId);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        String gameState = rs.getString("game_state");
+                        if (gameState != null && !gameState.isEmpty()) {
+                            return new Gson().fromJson(gameState, ChessGame.class);
+                        } else {
+                            throw new DataAccessException("Game state is null or empty for game ID: " + gameId);
+                        }
+                    } else {
+                        throw new DataAccessException("No game found with ID: " + gameId);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error retrieving chess game: " + e.getMessage());
+        }
     }
 
     private final String[] createStatements = {

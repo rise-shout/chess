@@ -1,5 +1,7 @@
 package dataaccess;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import model.GameData;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,8 @@ public class GameDAO implements GameDataAccess {
     }
 
     // Method to add a game and generate a unique game ID
+
+
     public int insertGame(GameData game) throws DataAccessException {
         try {
             int gameId = gameIdGenerator.getAndIncrement();
@@ -26,6 +30,7 @@ public class GameDAO implements GameDataAccess {
             throw new DataAccessException("Failed to insert game: " + e.getMessage());
         }
     }
+
 
     public GameData getGameById(int gameId) throws DataAccessException {
         try {
@@ -68,5 +73,10 @@ public class GameDAO implements GameDataAccess {
         } catch (Exception e) {
             throw new DataAccessException("Failed to clear all games: " + e.getMessage());
         }
+    }
+
+    @Override
+    public ChessGame getChessGame(int gameID) throws DataAccessException {
+        return null;
     }
 }

@@ -1,5 +1,7 @@
 package dataaccess;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,14 +17,17 @@ class MySqlGameDataAccessTest {
     void setUp() throws DataAccessException {
         gameDataAccess = new MySqlGameDataAccess(); // Assume this sets up the database connection
         gameDataAccess.clearAllGames();
+
     }
 
     @Test
     void testInsertGameSuccess() throws DataAccessException {
         // Create a GameData object for testing
+        var gameState = new Gson().toJson( new ChessGame());
         GameData game = new GameData(1, "playerWhite", "playerBlack","testGame");
 
         // Insert the game
+        Gson gson = new Gson();
         int gameId = gameDataAccess.insertGame(game);
 
         // Retrieve the game by its ID and check if it was inserted successfully
@@ -37,6 +42,7 @@ class MySqlGameDataAccessTest {
     void testInsertGameFailure() throws DataAccessException {
         // Create a game object
         GameData game = new GameData(1, "playerWhite", "playerBlack","testGame");
+        Gson gson = new Gson();
         int gameId = gameDataAccess.insertGame(game);
 
         // Try inserting a game with the same name, assuming game names should be unique
@@ -53,6 +59,7 @@ class MySqlGameDataAccessTest {
     @Test
     void testGetGameByIdSuccess() throws DataAccessException {
         // Insert a game first
+
         GameData game = new GameData(1,"playerWhite", "playerBlack", "testGame");
         int gameId = gameDataAccess.insertGame(game);
 
@@ -104,7 +111,7 @@ class MySqlGameDataAccessTest {
 
     @Test
     void testGetAllGames() throws DataAccessException {
-        // Insert a couple of games
+
         gameDataAccess.insertGame(new GameData(1,"playerWhite1", "playerBlack1", "game1"));
         gameDataAccess.insertGame(new GameData(2,"playerWhite2", "playerBlack2", "game2"));
 
