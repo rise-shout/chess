@@ -5,7 +5,7 @@ import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
-import server.ServerFacade;
+import chessclient.ServerFacade;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.net.*;

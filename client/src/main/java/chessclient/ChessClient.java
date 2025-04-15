@@ -1,13 +1,12 @@
 package chessclient;
-import server.websocket.WebSocketHandler;
 
 import chess.ChessGame;
 
 
 import model.*;
-import server.ServerFacade;
 import websocket.WebSocketFacade;
 import websocket.NotificationHandler;
+import javax.websocket.*;
 
 
 import java.util.Scanner;
@@ -19,6 +18,7 @@ public class ChessClient {
     private static WebSocketFacade ws;
     private static NotificationHandler notificationHandler = null;
     public static String userAuthToken = null;
+    public Session session;
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
         serverFacade = new ServerFacade(serverUrl);
@@ -196,8 +196,8 @@ public class ChessClient {
                 ws.playerJoinGame(loggedInUsername,userAuthToken,gameNumber);
 
                 // After joining the game, display the board
-                //NOTE: THIS IS A GENERIC BOARD, NOT THE ACTUAL GAME BOARD
-                ChessboardRenderer.drawBoard(currentGame, color);  // Display the board from the correct perspective
+
+                ChessboardRenderer.drawBoard(currentGame, color);
 
 
 
@@ -310,7 +310,7 @@ public class ChessClient {
         UserData user = new UserData(username, password, email);
 
         try {
-            // Initialize the server.ServerFacade
+            // Initialize the chessclient.ServerFacade
             //ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
             // Call the register method on the serverFacade
             AuthData result = serverFacade.register(user);
@@ -325,5 +325,9 @@ public class ChessClient {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public void send(String msg) throws Exception {
+        this.session.getBasicRemote().sendText(msg);
     }
 }

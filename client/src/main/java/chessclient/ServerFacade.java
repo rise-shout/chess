@@ -1,4 +1,4 @@
-package server;
+package chessclient;
 
 import java.io.*;
 import java.net.HttpURLConnection;
