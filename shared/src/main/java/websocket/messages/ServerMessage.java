@@ -20,12 +20,14 @@ public class ServerMessage {
     //-----DO NOT CHANGE ABOVE-------//
 
     public static class Notification extends ServerMessage {
+
+        private String message;
         public Notification(ServerMessageType type) {
             super(type);
         }
         public Notification(ServerMessageType sType, Type type, String message) {
             super(sType);
-
+            this.message = message;
         }
 
         public enum Type {
@@ -37,6 +39,11 @@ public class ServerMessage {
             IN_CHECK,
             IN_CHECKMATE
 
+        }
+
+        //getter for message
+        public String message() {
+            return message;
         }
 
 

@@ -1,4 +1,5 @@
 package chessclient;
+import server.websocket.WebSocketHandler;
 
 import chess.ChessGame;
 
@@ -6,6 +7,7 @@ import chess.ChessGame;
 import model.*;
 import server.ServerFacade;
 import websocket.WebSocketFacade;
+import websocket.NotificationHandler;
 
 
 import java.util.Scanner;
@@ -14,18 +16,23 @@ public class ChessClient {
 
     public static ServerFacade serverFacade;
     public static String loggedInUsername = null;
-    private WebSocketFacade ws;
+    private static WebSocketFacade ws;
+    private static NotificationHandler notificationHandler = null;
     public static String userAuthToken = null;
 
-        public static void main(String[] args) throws Exception {
+    public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
+        serverFacade = new ServerFacade(serverUrl);
+        this.notificationHandler = notificationHandler;
+    }
+
+
+
+    public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         boolean loggedIn = false;
         boolean inGame = false;
 
-
-
-        System.out.println("Welcome to the Chess Client!");
         if(serverFacade == null) {
             serverFacade = new ServerFacade("http://localhost:8080");
         }
@@ -54,6 +61,7 @@ public class ChessClient {
                             assert newUser != null;
                             loggedInUsername = newUser.username();
                             userAuthToken = newUser.authToken();
+
                             //System.out.println(newUser);
                         }catch (Exception e) {
                             loggedIn = false;
@@ -187,6 +195,10 @@ public class ChessClient {
                 System.out.println("Successfully joined the game as " + color + ".");
             }
 
+            //do websocket stuff
+            ws = new WebSocketFacade(serverFacade.serverUrl, notificationHandler);
+            ws.playerJoinGame(loggedInUsername,userAuthToken,gameNumber);
+
             // After joining the game, display the board
             //NOTE: THIS IS A GENERIC BOARD, NOT THE ACTUAL GAME BOARD
             ChessboardRenderer.drawBoard(new ChessGame(), color);  // Display the board from the correct perspective
@@ -273,6 +285,8 @@ public class ChessClient {
 
             AuthData result = serverFacade.login(user);
             System.out.println("Login successful! Welcome, " + result.username());
+
+
             return result;
         } catch (Exception e) {
             System.out.println("Login failed, incorrect username or password");
