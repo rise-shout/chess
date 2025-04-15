@@ -131,6 +131,16 @@ public class ChessClient {
                         System.out.println("\nInvalid choice.");
                 }
             }
+            else if(inGame) {
+                System.out.println("Currently in game. Press X to return to menu.");
+                String input = scanner.nextLine().trim().toUpperCase();
+                switch (input) {
+                    case "X":
+                        inGame = false;
+                        break;
+                }
+
+            }
         }
         scanner.close();
     }
