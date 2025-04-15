@@ -34,6 +34,13 @@ public class ServerFacade {
 
     }
 
+    public void logout(String authToken) throws Exception{
+        String path = "/session";
+        //System.out.println("Auth Token in log out: " + authToken);
+        this.makeRequest("DELETE", path, authToken, AuthData.class, authToken);
+    }
+
+
     public List<GameData> listGames(String authToken) throws Exception {
         String path = "/game";
 

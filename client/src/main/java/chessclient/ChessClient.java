@@ -14,7 +14,7 @@ public class ChessClient {
     public static String loggedInUsername = null;
     public static String userAuthToken = null;
 
-        public static void main(String[] args) {
+        public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         boolean loggedIn = false;
@@ -99,7 +99,8 @@ public class ChessClient {
                                 \t- Observe a game: Pick an existing game to watch, but not join as a player.""");
                         break;
                     case "2":
-                        System.out.println("\nLogging out...");
+                        System.out.println("\nLogging out...\n");
+                        serverFacade.logout(userAuthToken);
                         loggedIn = false;
                         loggedInUsername = null;
                         userAuthToken = null;

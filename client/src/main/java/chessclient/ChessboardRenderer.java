@@ -21,6 +21,9 @@ public class ChessboardRenderer {
 
         drawBasicBoard(out, playerColor, currGame.getBoard());
 
+        out.print(RESET_BG_COLOR);
+        out.print(RESET_TEXT_COLOR);
+
     }
 
     private static void drawBasicBoard(PrintStream out, String viewPoint, ChessBoard board) {

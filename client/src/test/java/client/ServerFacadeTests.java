@@ -88,6 +88,29 @@ public class ServerFacadeTests {
             facade.login(user);
         });
     }
+    @Test
+    void testLogoutPositive() throws Exception {
+        UserData user = new UserData("player2", "password", "p2@email.com");
+        facade.register(user);
+        AuthData authData = facade.login(user);
+
+        assertNotNull(authData);
+        facade.logout(authData.authToken());
+
+        assertThrows(Exception.class, () -> {
+            facade.listGames(authData.authToken());
+        });
+    }
+
+    @Test
+    void testLogoutNegative() {
+        String invalidAuthToken = "invalidToken123";
+
+        assertThrows(Exception.class, () -> {
+            facade.logout(invalidAuthToken);
+        });
+    }
+
 
     @Test
     void testListGamesPositive() throws Exception {
