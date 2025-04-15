@@ -88,21 +88,26 @@ public class ChessboardRenderer {
                     }
 
                     //set up the chess pieces
-
+                    //out.print(EscapeSequences.RESET_TEXT_COLOR);
                     if (board.currBoard[boardRow][boardCol] != null) {
-                        if (board.currBoard[boardRow][boardCol].getTeamColor() == ChessGame.TeamColor.WHITE) {
-                            setTextRed(out);
-                        } else {
-                            setTextBlue(out);
-                        }
                         if(viewPoint.equals("WHITE")) {
                             out.print(" ");
-                            out.print(getChar(board.currBoard[boardRow][boardCol]));
+                            if (board.currBoard[9-boardRow][boardCol].getTeamColor() == ChessGame.TeamColor.WHITE) {
+                                setTextWhite(out);
+                            } else {
+                                setTextBlack(out);
+                            }
+                            out.print(getChar(board.currBoard[9-boardRow][boardCol]));
                             out.print(" ");
                         }
                         else {
                             out.print(" ");
-                            out.print(getChar(board.currBoard[9-boardRow][9-boardCol]));
+                            if (board.currBoard[boardRow][9-boardCol].getTeamColor() == ChessGame.TeamColor.WHITE) {
+                                setTextWhite(out);
+                            } else {
+                                setTextBlack(out);
+                            }
+                            out.print(getChar(board.currBoard[boardRow][9-boardCol]));
                             out.print(" ");
                         }
                     } else {
@@ -130,17 +135,17 @@ public class ChessboardRenderer {
         out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
     }
 
-    private static void setTextRed(PrintStream out) {
-        out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+    private static void setTextWhite(PrintStream out) {
+        out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
     }
 
-    private static void setTextBlue(PrintStream out) {
-        out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
+    private static void setTextBlack(PrintStream out) {
+        out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
     }
 
     private static void setBlack(PrintStream out) {
         out.print(EscapeSequences.SET_BG_COLOR_BLACK);
-        out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
     }
 
     private static String getChar(ChessPiece piece) {
