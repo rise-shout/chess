@@ -91,9 +91,9 @@ public class ChessboardRenderer {
 
                     if (board.currBoard[boardRow][boardCol] != null) {
                         if (board.currBoard[boardRow][boardCol].getTeamColor() == ChessGame.TeamColor.WHITE) {
-                            setTextWhite(out);
+                            setTextRed(out);
                         } else {
-                            setTextBlack(out);
+                            setTextBlue(out);
                         }
                         if(viewPoint.equals("WHITE")) {
                             out.print(" ");
@@ -130,17 +130,17 @@ public class ChessboardRenderer {
         out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
     }
 
-    private static void setTextWhite(PrintStream out) {
-        out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+    private static void setTextRed(PrintStream out) {
+        out.print(EscapeSequences.SET_TEXT_COLOR_RED);
     }
 
-    private static void setTextBlack(PrintStream out) {
-        out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+    private static void setTextBlue(PrintStream out) {
+        out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
     }
 
     private static void setBlack(PrintStream out) {
         out.print(EscapeSequences.SET_BG_COLOR_BLACK);
-        out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
+        out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
     }
 
     private static String getChar(ChessPiece piece) {
