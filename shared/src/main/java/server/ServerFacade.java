@@ -177,6 +177,7 @@ public class ServerFacade {
 
 
     private boolean isSuccessful(int status) {
+        System.out.println("STATUS: " + status);
         return status / 100 == 2;
     }
 }

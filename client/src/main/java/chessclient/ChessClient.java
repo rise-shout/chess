@@ -168,18 +168,15 @@ public class ChessClient {
         int gameNumber = Integer.parseInt(scanner.nextLine().trim());
 
         String color;
-        boolean resumeGame = false;
 
         assert allGames != null;
         if(allGames.get(gameNumber-1).blackUsername() != null && allGames.get(gameNumber-1).blackUsername().equals(loggedInUsername)) {
-            System.out.println("You have joined this game previously as the black player. Resuming game...");
-            color = "BLACK";
-            resumeGame = true;
+            System.out.println("You have joined this game previously as the black player, but left the game. Please start a new game.");
+            throw new Exception();
         }
         else if(allGames.get(gameNumber-1).whiteUsername() != null && allGames.get(gameNumber-1).whiteUsername().equals(loggedInUsername)) {
-            System.out.println("You have joined this game previously as the white player. Resuming game...");
-            color = "WHITE";
-            resumeGame = true;
+            System.out.println("You have joined this game previously as the white player, but left the game. Please start a new game.");
+            throw new Exception();
         }
         else {
             System.out.print("Enter the color you want to play (WHITE or BLACK): ");
@@ -187,21 +184,23 @@ public class ChessClient {
         }
 
 
-            if(!resumeGame) {
+
                 ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
 
                 // Join the selected game with the specified color
                 ChessGame currentGame = serverFacade.joinGame(userAuthToken, gameNumber, color);
                 System.out.println("Successfully joined the game as " + color + ".");
-            }
 
-            //do websocket stuff
-            ws = new WebSocketFacade(serverFacade.serverUrl, notificationHandler);
-            ws.playerJoinGame(loggedInUsername,userAuthToken,gameNumber);
+                //do websocket stuff
+                ws = new WebSocketFacade(serverFacade.serverUrl, notificationHandler);
+                ws.playerJoinGame(loggedInUsername,userAuthToken,gameNumber);
 
-            // After joining the game, display the board
-            //NOTE: THIS IS A GENERIC BOARD, NOT THE ACTUAL GAME BOARD
-            ChessboardRenderer.drawBoard(new ChessGame(), color);  // Display the board from the correct perspective
+                // After joining the game, display the board
+                //NOTE: THIS IS A GENERIC BOARD, NOT THE ACTUAL GAME BOARD
+                ChessboardRenderer.drawBoard(currentGame, color);  // Display the board from the correct perspective
+
+
+
 
 
     }
@@ -289,7 +288,7 @@ public class ChessClient {
 
             return result;
         } catch (Exception e) {
-            System.out.println("Login failed, incorrect username or password");
+            System.out.println("Login failed, incorrect username or password\n");
             return null;
         }
     }
