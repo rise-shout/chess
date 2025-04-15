@@ -2,6 +2,8 @@ package server;
 
 import dataaccess.*;
 
+import org.eclipse.jetty.websocket.api.annotations.*;
+import org.eclipse.jetty.websocket.api.*;
 import server.websocket.WebSocketHandler;
 import service.DatabaseService;
 import service.GameService;
@@ -87,5 +89,10 @@ public class Server {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    @OnWebSocketMessage
+    public void onMessage(Session session, String message) throws Exception {
+        session.getRemote().sendString("WebSocket response: " + message);
     }
 }

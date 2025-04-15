@@ -12,16 +12,20 @@ import java.util.Objects;
  */
 public class UserGameCommand {
 
-    private final CommandType commandType;
+    public CommandType commandType;
 
     private final String authToken;
 
+    //added userName
+    private final String userName;
+
     private final Integer gameID;
 
-    public UserGameCommand(CommandType commandType, String authToken, Integer gameID) {
+    public UserGameCommand(CommandType commandType, String userName, String authToken, Integer gameID) {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
+        this.userName = userName;
     }
 
     public enum CommandType {
@@ -35,29 +39,31 @@ public class UserGameCommand {
 
     public class Connect extends UserGameCommand {
 
-        public Connect(CommandType commandType, String authToken, Integer gameID) {
-            super(commandType, authToken, gameID);
+        public Connect(CommandType commandType, String userName, String authToken, Integer gameID) {
+            super(commandType, userName, authToken, gameID);
         }
+
+
     }
 
     public class Leave extends UserGameCommand {
 
-        public Leave(CommandType commandType, String authToken, Integer gameID) {
-            super(commandType, authToken, gameID);
+        public Leave(CommandType commandType, String userName, String authToken, Integer gameID) {
+            super(commandType,  userName, authToken, gameID);
         }
     }
 
     public class Resign extends UserGameCommand {
 
-        public Resign(CommandType commandType, String authToken, Integer gameID) {
-            super(commandType, authToken, gameID);
+        public Resign(CommandType commandType, String userName, String authToken, Integer gameID) {
+            super(commandType, userName, authToken,  gameID);
         }
     }
 
     public class MakeMove extends UserGameCommand {
 
-        public MakeMove(CommandType commandType, String authToken, Integer gameID) {
-            super(commandType, authToken, gameID);
+        public MakeMove(CommandType commandType, String userName, String authToken, Integer gameID) {
+            super(commandType, userName, authToken, gameID);
         }
     }
 
@@ -74,6 +80,8 @@ public class UserGameCommand {
     public Integer getGameID() {
         return gameID;
     }
+
+    public String getUserName(){return userName;}
 
     @Override
     public boolean equals(Object o) {

@@ -24,9 +24,9 @@ public class MySqlGameDataAccess implements GameDataAccess {
     @Override
     public int insertGame(GameData game) throws DataAccessException {
         var statement = "INSERT INTO game (player_white, player_black, game_name, game_state) VALUES (?, ?, ?, ?)";
-        var gameState = new Gson().toJson(game); // Serialize game state
+        //var gameState = new Gson().toJson(game); // Serialize game state
         return executeUpdate(statement, game.whiteUsername(),
-                game.blackUsername(), game.gameName(), gameState);
+                game.blackUsername(), game.gameName(), game.gameState());
     }
 
     @Override
@@ -52,7 +52,8 @@ public class MySqlGameDataAccess implements GameDataAccess {
         String whiteUsername = rs.getString("player_white");
         String blackUsername = rs.getString("player_black");
         String gameName = rs.getString("game_name");
-        return new GameData(id, whiteUsername, blackUsername, gameName);
+        String gameState = rs.getString("game_state");
+        return new GameData(id, whiteUsername, blackUsername, gameName, gameState);
     }
 
     @Override
