@@ -19,10 +19,27 @@ public class ServerMessage {
 
     //-----DO NOT CHANGE ABOVE-------//
 
-    public class Notification extends ServerMessage {
+    public static class Notification extends ServerMessage {
         public Notification(ServerMessageType type) {
             super(type);
         }
+        public Notification(ServerMessageType sType, Type type, String message) {
+            super(sType);
+
+        }
+
+        public enum Type {
+            PLAYER_ARRIVAL,
+            OBSERVER_ARRIVAL,
+            MADE_MOVE,
+            PLAYER_DEPARTURE,
+            RESIGNATION,
+            IN_CHECK,
+            IN_CHECKMATE
+
+        }
+
+
     }
 
     public class Error extends ServerMessage {

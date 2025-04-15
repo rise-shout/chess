@@ -2,16 +2,21 @@ package server;
 
 import dataaccess.*;
 
+import server.websocket.WebSocketHandler;
 import service.DatabaseService;
 import service.GameService;
 import service.UserService;
 import spark.Spark;
 
 public class Server {
+    private final WebSocketHandler webSocketHandler;
+    // final GameService service;
 
-    /**
-     * Starts the server on the given port. Defaults to SQL storage if the port is '0', otherwise uses in-memory storage.
-     */
+
+    public Server() {
+        //this.service = service;
+        webSocketHandler = new WebSocketHandler();
+    }
 
     public int run(int desiredPort) {
         System.out.println("Setting Spark port...");
@@ -19,6 +24,8 @@ public class Server {
 
         System.out.println("Setting static files location...");
         Spark.staticFiles.location("web");
+
+
 
         System.out.println("Initializing DAOs...");
         // Determine which data access implementation to use
@@ -51,6 +58,9 @@ public class Server {
         DatabaseController dbController = new DatabaseController(new DatabaseService(userDAO, gameDAO, authTokenDAO));
 
         System.out.println("Registering routes...");
+
+        Spark.webSocket("/ws", webSocketHandler);
+
         // Register routes
         Spark.delete("/db", dbController.clearDatabase);
         Spark.post("/user", userController.register);

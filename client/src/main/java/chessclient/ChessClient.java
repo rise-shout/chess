@@ -5,6 +5,7 @@ import chess.ChessGame;
 
 import model.*;
 import server.ServerFacade;
+import websocket.WebSocketFacade;
 
 
 import java.util.Scanner;
@@ -13,6 +14,7 @@ public class ChessClient {
 
     public static ServerFacade serverFacade;
     public static String loggedInUsername = null;
+    private WebSocketFacade ws;
     public static String userAuthToken = null;
 
         public static void main(String[] args) throws Exception {
@@ -20,6 +22,9 @@ public class ChessClient {
         boolean running = true;
         boolean loggedIn = false;
         boolean inGame = false;
+
+
+
         System.out.println("Welcome to the Chess Client!");
         if(serverFacade == null) {
             serverFacade = new ServerFacade("http://localhost:8080");
