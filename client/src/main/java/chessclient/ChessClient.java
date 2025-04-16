@@ -203,7 +203,8 @@ public class ChessClient {
                 throw new Exception("Not your turn");
             }
 
-            String start = scanner.nextLine().trim();
+            String start;
+            start = scanner.nextLine().trim();
 
             // Convert column (letter) to a number (1 to 8)
             int actualCol = start.charAt(0) - 'a' + 1;
@@ -211,7 +212,6 @@ public class ChessClient {
             // Convert row (number as char) to an integer (1 to 8)
             int actualRow = start.charAt(1) - '0';
 
-            //System.out.println("ROW: " + actualRow + "\nCOL: " + actualCol);
             ChessPosition startPos = new ChessPosition(actualRow, actualCol);
 
             System.out.print("Enter where you would like to move your " + currGame.getBoard().currBoard[actualRow][actualCol].getPieceType() + " (ex:a1): ");
@@ -229,14 +229,8 @@ public class ChessClient {
             //making move!
             ChessMove newMove = new ChessMove(startPos,endPos,null);
             currGame.makeMove(newMove);
+            //update the current game using the server
 
-            //change what team's turn it is
-            if(Objects.equals(currColor, "WHITE")) {
-                currGame.setTeamTurn(ChessGame.TeamColor.BLACK);
-            }
-            else{
-                currGame.setTeamTurn(ChessGame.TeamColor.WHITE);
-            }
 
         }catch (Exception e) {
             System.out.println("unable to make the move sorry :/");

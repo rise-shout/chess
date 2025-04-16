@@ -63,6 +63,7 @@ public class GameController {
         }
     };
 
+
     public Route joinGame = (Request req, Response res) -> {
         try {
             String authToken = req.headers("authorization");

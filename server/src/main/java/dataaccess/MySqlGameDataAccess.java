@@ -57,22 +57,6 @@ public class MySqlGameDataAccess implements GameDataAccess {
         return new GameData(id, whiteUsername, blackUsername, gameName);
     }
 
-    private ChessGame getChessGame (ResultSet rs) throws SQLException {
-        // Retrieve the game_state column as a string
-        String gameState = rs.getString("game_state");
-
-        // Check if gameState is not null
-        if (gameState == null || gameState.isEmpty()) {
-            throw new SQLException("Game state is null or empty for the current row.");
-        }
-
-        // Use Gson to deserialize the JSON string into a ChessGame object
-        try {
-            return new Gson().fromJson(gameState, ChessGame.class);
-        } catch (Exception e) {
-            throw new SQLException("Failed to deserialize game state: " + e.getMessage(), e);
-        }
-    }
 
     @Override
     public void updateGame(GameData updatedGame) throws DataAccessException {
@@ -95,7 +79,7 @@ public class MySqlGameDataAccess implements GameDataAccess {
 
     public void doUpdate(GameData updatedGame) throws DataAccessException {
         var statement = "UPDATE game SET player_white=?, player_black=?, game_name=?, game_state=? WHERE id=?";
-        var gameState = new Gson().toJson(updatedGame);
+        var gameState = new Gson().toJson(getChessGame(updatedGame.gameID()));
         executeUpdate(statement, updatedGame.whiteUsername(), updatedGame.blackUsername(),
                 updatedGame.gameName(), gameState, updatedGame.gameID());
     }

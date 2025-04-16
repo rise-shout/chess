@@ -12,6 +12,9 @@ public class ConnectionManager {
 
     public void add(String visitorName, Session session) {
         var connection = new Connection(visitorName, session);
+        if(visitorName == null) {
+            visitorName = "TestCase";
+        }
         connections.put(visitorName, connection);
     }
 
@@ -23,7 +26,7 @@ public class ConnectionManager {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (!c.userName.equals(excludeUserName)) {
+                if (c.userName == null || !c.userName.equals(excludeUserName)) {
                     c.send(notification.toString());
                 }
             } else {

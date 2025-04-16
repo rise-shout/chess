@@ -72,6 +72,9 @@ public class Server {
         Spark.post("/game", gameController.createGame);
         Spark.put("/game", gameController.joinGame);
 
+        //maybe ok?
+        //Spark.put("/game/change", gameController.updateGame);
+
         System.out.println("Starting Spark...");
         Spark.init();
         Spark.awaitInitialization();
