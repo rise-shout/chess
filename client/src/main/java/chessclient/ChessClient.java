@@ -3,6 +3,8 @@ package chessclient;
 import chess.ChessGame;
 
 
+import chess.ChessMove;
+import chess.ChessPosition;
 import model.*;
 import websocket.WebSocketFacade;
 import websocket.NotificationHandler;
@@ -176,9 +178,11 @@ public class ChessClient {
                         System.out.println("Leaving game...");
                         //Need to actually remove from game?
                         inGame = false;
+                        currColor = null;
+                        currGame = null;
                         break;
                     case "4":
-                        makeMove();
+                        makeMove(scanner);
                         break;
                 }
 
@@ -187,11 +191,56 @@ public class ChessClient {
         scanner.close();
     }
 
-    private static void makeMove() {
+    private static void makeMove(Scanner scanner) {
+
         try{
+            System.out.print("Enter the current location of the piece you would like to move (ex:a1): ");
+
+            if(currGame.getTeamTurn() != ChessGame.TeamColor.BLACK && currColor.equals("BLACK")) {
+                throw new Exception("Not your turn");
+            }
+            else if(currGame.getTeamTurn() != ChessGame.TeamColor.WHITE && currColor.equals("WHITE")) {
+                throw new Exception("Not your turn");
+            }
+
+            String start = scanner.nextLine().trim();
+
+            // Convert column (letter) to a number (1 to 8)
+            int actualCol = start.charAt(0) - 'a' + 1;
+
+            // Convert row (number as char) to an integer (1 to 8)
+            int actualRow = start.charAt(1) - '0';
+
+            //System.out.println("ROW: " + actualRow + "\nCOL: " + actualCol);
+            ChessPosition startPos = new ChessPosition(actualRow, actualCol);
+
+            System.out.print("Enter where you would like to move your " + currGame.getBoard().currBoard[actualRow][actualCol].getPieceType() + " (ex:a1): ");
+            String end = scanner.nextLine().trim();
+
+            // Convert column (letter) to a number (1 to 8)
+            actualCol = end.charAt(0) - 'a' + 1;
+
+            // Convert row (number as char) to an integer (1 to 8)
+            actualRow = end.charAt(1) - '0';
+
+            //System.out.println("ROW: " + actualRow + "\nCOL: " + actualCol);
+            ChessPosition endPos = new ChessPosition(actualRow, actualCol);
+
+            //making move!
+            ChessMove newMove = new ChessMove(startPos,endPos,null);
+            currGame.makeMove(newMove);
+
+            //change what team's turn it is
+            if(Objects.equals(currColor, "WHITE")) {
+                currGame.setTeamTurn(ChessGame.TeamColor.BLACK);
+            }
+            else{
+                currGame.setTeamTurn(ChessGame.TeamColor.WHITE);
+            }
 
         }catch (Exception e) {
             System.out.println("unable to make the move sorry :/");
+            System.out.println(e.getMessage());
         }
     }
 
