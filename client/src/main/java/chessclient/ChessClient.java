@@ -18,11 +18,15 @@ public class ChessClient {
     private static WebSocketFacade ws;
     private static NotificationHandler notificationHandler = null;
     public static String userAuthToken = null;
+    public static ChessGame currGame = null;
+    public static String currColor = null;
     public Session session;
+    private static String serverUrl;
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
         serverFacade = new ServerFacade(serverUrl);
         this.notificationHandler = notificationHandler;
+        this.serverUrl = serverUrl;
     }
 
 
@@ -146,17 +150,53 @@ public class ChessClient {
                 }
             }
             else if(inGame) {
-                System.out.println("Currently in game. Press X to return to menu.");
+                System.out.println("\n~Playing Game~\nOptions:");
+                System.out.println("""
+                        \t1. Help
+                        \t2. Update the board
+                        \t3. Leave the game
+                        \t4. Make a move
+                        \t5. Resign
+                        \t6. Highlight legal moves
+                        What would you like to do:\s""");
                 String input = scanner.nextLine().trim().toUpperCase();
                 switch (input) {
-                    case "X":
+                    case "1":
+                        System.out.println("\nHelp: Available commands are:" +
+                                "\n\t- Update the board: Redraws the chessboard with any updates" +
+                                "\t- Leave the game: You leave the game" +
+                                "\t- Make a move: Move one of your chess pieces on your turn" +
+                                "\t- Resign: forfeit the game" +
+                                "\t- Highlight legal moves: show legal moves for a specific chess piece");
+                        break;
+                    case "2":
+                        updateBoard();
+                        break;
+                    case "3":
+                        System.out.println("Leaving game...");
+                        //Need to actually remove from game?
                         inGame = false;
+                        break;
+                    case "4":
+                        makeMove();
                         break;
                 }
 
             }
         }
         scanner.close();
+    }
+
+    private static void makeMove() {
+        try{
+
+        }catch (Exception e) {
+            System.out.println("unable to make the move sorry :/");
+        }
+    }
+
+    private static void updateBoard() {
+        ChessboardRenderer.drawBoard(currGame, currColor);
     }
 
     private static void playGame(Scanner scanner, String userAuthToken, String loggedInUsername) throws Exception  {
@@ -188,7 +228,8 @@ public class ChessClient {
                 ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
 
                 // Join the selected game with the specified color
-                ChessGame currentGame = serverFacade.joinGame(userAuthToken, gameNumber, color);
+                currGame = serverFacade.joinGame(userAuthToken, gameNumber, color);
+                currColor = color;
                 System.out.println("Successfully joined the game as " + color + ".");
 
                 //do websocket stuff
@@ -197,11 +238,7 @@ public class ChessClient {
 
                 // After joining the game, display the board
 
-                ChessboardRenderer.drawBoard(currentGame, color);
-
-
-
-
+                ChessboardRenderer.drawBoard(currGame, currColor);
 
     }
 
@@ -284,6 +321,9 @@ public class ChessClient {
 
             AuthData result = serverFacade.login(user);
             System.out.println("Login successful! Welcome, " + result.username());
+
+            //make websocket connection?
+
 
 
             return result;
