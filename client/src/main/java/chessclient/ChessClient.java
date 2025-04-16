@@ -268,7 +268,7 @@ public class ChessClient {
 
 
 
-                ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+                ServerFacade serverFacade = new ServerFacade(serverUrl);
 
                 // Join the selected game with the specified color
                 currGame = serverFacade.joinGame(userAuthToken, gameNumber, color);
@@ -276,7 +276,7 @@ public class ChessClient {
                 System.out.println("Successfully joined the game as " + color + ".");
 
                 //do websocket stuff
-                ws = new WebSocketFacade(serverFacade.serverUrl, notificationHandler);
+                ws = new WebSocketFacade(serverUrl, notificationHandler);
                 ws.playerJoinGame(loggedInUsername,userAuthToken,gameNumber);
 
                 // After joining the game, display the board
@@ -310,7 +310,7 @@ public class ChessClient {
         String gameName = scanner.nextLine().trim();
 
         try {
-            ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+            ServerFacade serverFacade = new ServerFacade(serverUrl);
             GameData game = new GameData(0,null,null,gameName);
             //System.out.println("Auth Token: " + userAuthToken);
             serverFacade.createGame(game, loggedInUsername, userAuthToken);

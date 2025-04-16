@@ -11,14 +11,9 @@ import service.UserService;
 import spark.Spark;
 
 public class Server {
-    private final WebSocketHandler webSocketHandler;
     // final GameService service;
 
 
-    public Server() {
-        //this.service = service;
-        webSocketHandler = new WebSocketHandler();
-    }
 
     public int run(int desiredPort) {
         System.out.println("Setting Spark port...");
@@ -61,6 +56,7 @@ public class Server {
 
         System.out.println("Registering routes...");
 
+        WebSocketHandler webSocketHandler = new WebSocketHandler(userDAO, authTokenDAO, gameDAO);
         Spark.webSocket("/ws", webSocketHandler);
 
         // Register routes

@@ -5,6 +5,7 @@ import model.AuthData;
 
 public interface AuthDataAccess {
     void insertAuth(AuthData authData) throws DataAccessException;
+
     AuthData getAuth(String authToken) throws DataAccessException;
 
 
